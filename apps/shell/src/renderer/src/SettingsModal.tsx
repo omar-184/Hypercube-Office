@@ -60,6 +60,9 @@ const DOC_THEME_OPTIONS = [
 
 type SectionId = 'general' | 'performance' | 'about'
 
+/** the attribution line from NOTICE; a legal notice, so it is not translated */
+const COPYRIGHT_LINE = 'Copyright © 2026 The Hypercube Office contributors'
+
 const SECTIONS: readonly { id: SectionId; labelKey: StringKey }[] = [
   { id: 'general', labelKey: 'setSecGeneral' },
   { id: 'performance', labelKey: 'setSecPerformance' },
@@ -478,9 +481,43 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                     onClick={toggleUpdates}
                   />
                 </div>
+                {/* AGPL-3.0 §5(d): an interactive UI shows the license, the absence of
+                    warranty and where to read the terms */}
+                <div className="set-field">
+                  <div className="set-field-text">
+                    <div className="set-field-stack">
+                      <div className="set-field-label">{t('setLicense')}</div>
+                      <div className="set-field-desc">
+                        {COPYRIGHT_LINE}
+                        <br />
+                        {t('setLicenseDesc')}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    className="set-btn"
+                    onClick={() => void window.hyperFiles.openLegalNotice('license')}
+                  >
+                    {t('setViewLicense')}
+                  </button>
+                </div>
+                <div className="set-field">
+                  <div className="set-field-text">
+                    <div className="set-field-stack">
+                      <div className="set-field-label">{t('setNotices')}</div>
+                      <div className="set-field-desc">{t('setNoticesDesc')}</div>
+                    </div>
+                  </div>
+                  <button
+                    className="set-btn"
+                    onClick={() => void window.hyperFiles.openLegalNotice('notices')}
+                  >
+                    {t('setViewNotices')}
+                  </button>
+                </div>
                 <Field
                   label={t('setGithub')}
-                  value="github.com/omar-184/Hyper-Files"
+                  value="github.com/omar-184/Hypercube-Office"
                   action={
                     <button
                       className="set-btn"

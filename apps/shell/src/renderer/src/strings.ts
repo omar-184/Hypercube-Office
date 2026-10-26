@@ -128,6 +128,12 @@ export const strings = {
     setSecAbout: '关于',
     setGithub: '开源项目',
     openOnGitHub: '在 GitHub 上打开',
+    setLicense: '许可证',
+    setLicenseDesc: '本软件为自由软件，依据 GNU Affero 通用公共许可证第 3 版发布，不提供任何担保。',
+    setViewLicense: '查看许可证',
+    setNotices: '第三方声明',
+    setNoticesDesc: '所用的其他开源项目组件及其许可证。',
+    setViewNotices: '查看声明',
     setChange: '更改',
     setUpdates: '检查更新',
     setUpdatesDesc:
@@ -327,6 +333,13 @@ export const strings = {
     setSecAbout: 'About',
     setGithub: 'Open Source',
     openOnGitHub: 'Open on GitHub',
+    setLicense: 'License',
+    setLicenseDesc:
+      'Free software under the GNU Affero General Public License, version 3, with ABSOLUTELY NO WARRANTY.',
+    setViewLicense: 'View license',
+    setNotices: 'Third-party notices',
+    setNoticesDesc: 'Components from other open-source projects and their licenses.',
+    setViewNotices: 'View notices',
     setChange: 'Change',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -529,6 +542,13 @@ export const strings = {
     setSecAbout: 'Giới thiệu',
     setGithub: 'Mã nguồn mở',
     openOnGitHub: 'Mở trên GitHub',
+    setLicense: 'Giấy phép',
+    setLicenseDesc:
+      'Phần mềm tự do theo Giấy phép Công cộng GNU Affero, phiên bản 3, KHÔNG CÓ BẤT KỲ BẢO HÀNH NÀO.',
+    setViewLicense: 'Xem giấy phép',
+    setNotices: 'Thông báo bên thứ ba',
+    setNoticesDesc: 'Các thành phần từ dự án mã nguồn mở khác và giấy phép của chúng.',
+    setViewNotices: 'Xem thông báo',
     setChange: 'Thay đổi',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -740,6 +760,13 @@ export const strings = {
     setSecAbout: '情報',
     setGithub: 'オープンソース',
     openOnGitHub: 'GitHub で開く',
+    setLicense: 'ライセンス',
+    setLicenseDesc:
+      'GNU Affero 一般公衆利用許諾書 第 3 版に基づくフリーソフトウェアです。一切の保証はありません。',
+    setViewLicense: 'ライセンスを表示',
+    setNotices: 'サードパーティの表示',
+    setNoticesDesc: '使用している他のオープンソース プロジェクトのコンポーネントとそのライセンス。',
+    setViewNotices: '表示を開く',
     setChange: '変更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -950,6 +977,13 @@ export const strings = {
     setSecAbout: '정보',
     setGithub: '오픈 소스',
     openOnGitHub: 'GitHub에서 열기',
+    setLicense: '라이선스',
+    setLicenseDesc:
+      'GNU Affero 일반 공중 사용 허가서 버전 3에 따른 자유 소프트웨어이며, 어떠한 보증도 제공하지 않습니다.',
+    setViewLicense: '라이선스 보기',
+    setNotices: '타사 고지',
+    setNoticesDesc: '사용된 다른 오픈 소스 프로젝트의 구성 요소와 해당 라이선스입니다.',
+    setViewNotices: '고지 보기',
     setChange: '변경',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1164,6 +1198,13 @@ export const strings = {
     setSecAbout: 'À propos',
     setGithub: 'Open source',
     openOnGitHub: 'Ouvrir sur GitHub',
+    setLicense: 'Licence',
+    setLicenseDesc:
+      'Logiciel libre sous licence GNU Affero General Public License, version 3, SANS AUCUNE GARANTIE.',
+    setViewLicense: 'Voir la licence',
+    setNotices: 'Mentions tierces',
+    setNoticesDesc: 'Composants d’autres projets open source et leurs licences.',
+    setViewNotices: 'Voir les mentions',
     setChange: 'Modifier',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1381,6 +1422,13 @@ export const strings = {
     setSecAbout: 'Über',
     setGithub: 'Open Source',
     openOnGitHub: 'Auf GitHub öffnen',
+    setLicense: 'Lizenz',
+    setLicenseDesc:
+      'Freie Software unter der GNU Affero General Public License, Version 3, OHNE JEGLICHE GEWÄHRLEISTUNG.',
+    setViewLicense: 'Lizenz anzeigen',
+    setNotices: 'Hinweise zu Drittanbietern',
+    setNoticesDesc: 'Komponenten anderer Open-Source-Projekte und ihre Lizenzen.',
+    setViewNotices: 'Hinweise anzeigen',
     setChange: 'Ändern',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1596,6 +1644,13 @@ export const strings = {
     setSecAbout: 'Acerca de',
     setGithub: 'Código abierto',
     openOnGitHub: 'Abrir en GitHub',
+    setLicense: 'Licencia',
+    setLicenseDesc:
+      'Software libre bajo la GNU Affero General Public License, versión 3, SIN NINGUNA GARANTÍA.',
+    setViewLicense: 'Ver licencia',
+    setNotices: 'Avisos de terceros',
+    setNoticesDesc: 'Componentes de otros proyectos de código abierto y sus licencias.',
+    setViewNotices: 'Ver avisos',
     setChange: 'Cambiar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1806,6 +1861,13 @@ export const strings = {
     setSecAbout: 'เกี่ยวกับ',
     setGithub: 'โอเพนซอร์ส',
     openOnGitHub: 'เปิดบน GitHub',
+    setLicense: 'สัญญาอนุญาต',
+    setLicenseDesc:
+      'ซอฟต์แวร์เสรีภายใต้สัญญาอนุญาต GNU Affero General Public License รุ่น 3 โดยไม่มีการรับประกันใดๆ',
+    setViewLicense: 'ดูสัญญาอนุญาต',
+    setNotices: 'ประกาศของบุคคลที่สาม',
+    setNoticesDesc: 'ส่วนประกอบจากโครงการโอเพนซอร์สอื่นและสัญญาอนุญาต',
+    setViewNotices: 'ดูประกาศ',
     setChange: 'เปลี่ยน',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2020,6 +2082,13 @@ export const strings = {
     setSecAbout: 'Tentang',
     setGithub: 'Sumber Terbuka',
     openOnGitHub: 'Buka di GitHub',
+    setLicense: 'Lisensi',
+    setLicenseDesc:
+      'Perangkat lunak bebas di bawah GNU Affero General Public License versi 3, TANPA JAMINAN APA PUN.',
+    setViewLicense: 'Lihat lisensi',
+    setNotices: 'Pemberitahuan pihak ketiga',
+    setNoticesDesc: 'Komponen dari proyek sumber terbuka lain beserta lisensinya.',
+    setViewNotices: 'Lihat pemberitahuan',
     setChange: 'Ubah',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2233,6 +2302,13 @@ export const strings = {
     setSecAbout: 'О программе',
     setGithub: 'Открытый код',
     openOnGitHub: 'Открыть на GitHub',
+    setLicense: 'Лицензия',
+    setLicenseDesc:
+      'Свободное ПО под лицензией GNU Affero General Public License версии 3, БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ.',
+    setViewLicense: 'Открыть лицензию',
+    setNotices: 'Сторонние компоненты',
+    setNoticesDesc: 'Компоненты других проектов с открытым исходным кодом и их лицензии.',
+    setViewNotices: 'Открыть список',
     setChange: 'Изменить',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2444,6 +2520,13 @@ export const strings = {
     setSecAbout: 'حول',
     setGithub: 'مفتوح المصدر',
     openOnGitHub: 'فتح على GitHub',
+    setLicense: 'الترخيص',
+    setLicenseDesc:
+      'برنامج حر مرخّص بموجب رخصة جنو أفيرو العمومية العامة، الإصدار 3، دون أي ضمان على الإطلاق.',
+    setViewLicense: 'عرض الترخيص',
+    setNotices: 'إشعارات الجهات الخارجية',
+    setNoticesDesc: 'مكوّنات من مشاريع مفتوحة المصدر أخرى وتراخيصها.',
+    setViewNotices: 'عرض الإشعارات',
     setChange: 'تغيير',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2648,6 +2731,13 @@ export const strings = {
     setSecAbout: 'Sobre',
     setGithub: 'Código aberto',
     openOnGitHub: 'Abrir no GitHub',
+    setLicense: 'Licença',
+    setLicenseDesc:
+      'Software livre sob a GNU Affero General Public License, versão 3, SEM QUALQUER GARANTIA.',
+    setViewLicense: 'Ver licença',
+    setNotices: 'Avisos de terceiros',
+    setNoticesDesc: 'Componentes de outros projetos de código aberto e suas licenças.',
+    setViewNotices: 'Ver avisos',
     setChange: 'Alterar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2852,6 +2942,13 @@ export const strings = {
     setSecAbout: 'Informazioni',
     setGithub: 'Open source',
     openOnGitHub: 'Apri su GitHub',
+    setLicense: 'Licenza',
+    setLicenseDesc:
+      'Software libero distribuito con la GNU Affero General Public License, versione 3, SENZA ALCUNA GARANZIA.',
+    setViewLicense: 'Visualizza licenza',
+    setNotices: 'Note di terze parti',
+    setNoticesDesc: 'Componenti di altri progetti open source e relative licenze.',
+    setViewNotices: 'Visualizza note',
     setChange: 'Cambia',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3057,6 +3154,13 @@ export const strings = {
     setSecAbout: 'O aplikacji',
     setGithub: 'Open source',
     openOnGitHub: 'Otwórz w GitHub',
+    setLicense: 'Licencja',
+    setLicenseDesc:
+      'Wolne oprogramowanie na licencji GNU Affero General Public License w wersji 3, BEZ JAKIEJKOLWIEK GWARANCJI.',
+    setViewLicense: 'Pokaż licencję',
+    setNotices: 'Komponenty innych firm',
+    setNoticesDesc: 'Komponenty z innych projektów open source i ich licencje.',
+    setViewNotices: 'Pokaż listę',
     setChange: 'Zmień',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3249,6 +3353,13 @@ export const strings = {
     setSecAbout: 'O aplikaci',
     setGithub: 'Open source',
     openOnGitHub: 'Otevřít na GitHubu',
+    setLicense: 'Licence',
+    setLicenseDesc:
+      'Svobodný software pod licencí GNU Affero General Public License verze 3, BEZ JAKÉKOLI ZÁRUKY.',
+    setViewLicense: 'Zobrazit licenci',
+    setNotices: 'Oznámení třetích stran',
+    setNoticesDesc: 'Součásti z jiných open-source projektů a jejich licence.',
+    setViewNotices: 'Zobrazit oznámení',
     setChange: 'Změnit',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3463,6 +3574,13 @@ export const strings = {
     setSecAbout: 'Over',
     setGithub: 'Open source',
     openOnGitHub: 'Openen op GitHub',
+    setLicense: 'Licentie',
+    setLicenseDesc:
+      'Vrije software onder de GNU Affero General Public License, versie 3, ZONDER ENIGE GARANTIE.',
+    setViewLicense: 'Licentie bekijken',
+    setNotices: 'Kennisgevingen van derden',
+    setNoticesDesc: 'Onderdelen uit andere opensourceprojecten en hun licenties.',
+    setViewNotices: 'Kennisgevingen bekijken',
     setChange: 'Wijzigen',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3667,6 +3785,13 @@ export const strings = {
     setSecAbout: 'Perihal',
     setGithub: 'Sumber Terbuka',
     openOnGitHub: 'Buka di GitHub',
+    setLicense: 'Lesen',
+    setLicenseDesc:
+      'Perisian bebas di bawah GNU Affero General Public License versi 3, TANPA SEBARANG JAMINAN.',
+    setViewLicense: 'Lihat lesen',
+    setNotices: 'Notis pihak ketiga',
+    setNoticesDesc: 'Komponen daripada projek sumber terbuka lain dan lesennya.',
+    setViewNotices: 'Lihat notis',
     setChange: 'Tukar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3868,6 +3993,13 @@ export const strings = {
     setSecAbout: 'אודות',
     setGithub: 'קוד פתוח',
     openOnGitHub: 'פתח ב-GitHub',
+    setLicense: 'רישיון',
+    setLicenseDesc:
+      'תוכנה חופשית ברישיון GNU Affero General Public License, גרסה 3, ללא כל אחריות.',
+    setViewLicense: 'הצגת הרישיון',
+    setNotices: 'הודעות צד שלישי',
+    setNoticesDesc: 'רכיבים מפרויקטים אחרים בקוד פתוח והרישיונות שלהם.',
+    setViewNotices: 'הצגת ההודעות',
     setChange: 'שינוי',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4073,6 +4205,13 @@ export const strings = {
     setSecAbout: 'जानकारी',
     setGithub: 'ओपन सोर्स',
     openOnGitHub: 'GitHub पर खोलें',
+    setLicense: 'लाइसेंस',
+    setLicenseDesc:
+      'GNU Affero जनरल पब्लिक लाइसेंस, संस्करण 3 के तहत मुक्त सॉफ़्टवेयर, बिना किसी वारंटी के।',
+    setViewLicense: 'लाइसेंस देखें',
+    setNotices: 'तृतीय-पक्ष सूचनाएँ',
+    setNoticesDesc: 'अन्य ओपन-सोर्स परियोजनाओं के घटक और उनके लाइसेंस।',
+    setViewNotices: 'सूचनाएँ देखें',
     setChange: 'बदलें',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4274,6 +4413,12 @@ export const strings = {
     setSecAbout: '關於',
     setGithub: '開源專案',
     openOnGitHub: '在 GitHub 上開啟',
+    setLicense: '授權條款',
+    setLicenseDesc: '本軟體為自由軟體，依 GNU Affero 通用公共授權條款第 3 版發布，不提供任何擔保。',
+    setViewLicense: '檢視授權條款',
+    setNotices: '第三方聲明',
+    setNoticesDesc: '所使用的其他開放原始碼專案元件及其授權條款。',
+    setViewNotices: '檢視聲明',
     setChange: '變更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:

@@ -3960,6 +3960,30 @@ function registerHomeIpc(): void {
     })
   })
 
+  // About's license rows (AGPL-3.0 §5(d)). Packaged builds ship the texts beside
+  // the app (electron-builder extraResources); a dev run reads them from the
+  // repository, where the generated third-party list may not exist yet.
+  ipcMain.handle(HOME_CHANNELS.openLegalNotice, async (_e, which: unknown) => {
+    const repo = join(app.getAppPath(), '..', '..')
+    const candidates =
+      which === 'license'
+        ? app.isPackaged
+          ? [join(process.resourcesPath, 'LICENSE.txt')]
+          : [join(repo, 'LICENSE')]
+        : which === 'notices'
+          ? app.isPackaged
+            ? [
+                join(process.resourcesPath, 'THIRD-PARTY-NOTICES.txt'),
+                join(process.resourcesPath, 'NOTICE.txt'),
+              ]
+            : [join(app.getAppPath(), 'build', 'THIRD-PARTY-NOTICES.txt'), join(repo, 'NOTICE')]
+          : []
+    const file = candidates.find((path) => existsSync(path))
+    if (!file) return false
+    // openPath resolves to an error message, or '' once the file is open
+    return (await shell.openPath(file)) === ''
+  })
+
   ipcMain.handle(HOME_CHANNELS.getUpdateCheck, (): UpdateCheckStatus => ({
     enabled: updateChecker.enabled(),
     last: updateChecker.last(),

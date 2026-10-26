@@ -289,6 +289,9 @@ const homeApi: HomeApi = {
   async openGitHubRepo() {
     await ipcRenderer.invoke(HOME_CHANNELS.openGitHubRepo)
   },
+  async openLegalNotice(which) {
+    return (await ipcRenderer.invoke(HOME_CHANNELS.openLegalNotice, which)) === true
+  },
   async getUpdateCheck() {
     const r = (await ipcRenderer.invoke(HOME_CHANNELS.getUpdateCheck)) as {
       enabled?: unknown
