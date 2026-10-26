@@ -1,9 +1,14 @@
-/* Word for Mac "Collapse ribbon" (see ribbon-collapse.tsx for the markup contract) */
+/* Office "Collapse ribbon" (see ribbon-collapse.tsx for the markup contract) */
 .ribbon-collapsible {
   position: relative;
 }
 .ribbon-collapsible [data-ribbon-body] {
   anchor-name: --ribbon-body;
+}
+/* the corner chevron gets a gutter of its own beside the band: inside the band
+ * (padding) it covered the last command whenever the band scrolled sideways */
+.ribbon-collapsible:has(> .ribbon-collapse-btn) [data-ribbon-body] {
+  margin-right: 28px;
 }
 .ribbon-collapsible.ribbon-collapsed [data-ribbon-body] {
   display: none;
@@ -12,7 +17,7 @@
   position: absolute;
   position-anchor: --ribbon-body;
   bottom: calc(anchor(bottom) + 3px);
-  right: calc(anchor(right) + 4px);
+  left: calc(anchor(right) + 4px);
   z-index: 61;
 }
 .ribbon-collapse-btn,

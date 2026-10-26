@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import type { ToolId, ToolOptions } from '../../../shared/pdf-tools-api'
 import type { ToolStringKey } from '../i18n/strings-tools'
 import type { ToolsT } from './use-tools-i18n'
@@ -26,33 +26,89 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   )
 }
 
+interface ChoiceProps<V extends string | number> {
+  value: V
+  options: { value: V; label: string; desc?: string }[]
+  onChange: (v: V) => void
+  disabled: boolean
+}
+
+/**
+ * Radio group of option buttons: one Tab stop (the checked option), arrow keys
+ * move the selection like native radios, mirrored for right-to-left layouts.
+ */
 function Choice<V extends string | number>({
   value,
   options,
   onChange,
   disabled,
-}: {
-  value: V
-  options: { value: V; label: string; desc?: string }[]
-  onChange: (v: V) => void
-  disabled: boolean
-}) {
+  labelledBy,
+}: ChoiceProps<V> & { labelledBy: string }) {
+  const buttons = useRef<(HTMLButtonElement | null)[]>([])
+  const checked = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  )
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const rtl = getComputedStyle(e.currentTarget).direction === 'rtl'
+    const forward = e.key === 'ArrowDown' || e.key === (rtl ? 'ArrowLeft' : 'ArrowRight')
+    const back = e.key === 'ArrowUp' || e.key === (rtl ? 'ArrowRight' : 'ArrowLeft')
+    if (!forward && !back) return
+    e.preventDefault()
+    const next = (checked + (forward ? 1 : -1) + options.length) % options.length
+    onChange(options[next]!.value)
+    buttons.current[next]?.focus()
+  }
   return (
-    <div className="pt-choice" role="radiogroup">
-      {options.map((o) => (
+    <div
+      className="pt-choice"
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      onKeyDown={disabled ? undefined : onKeyDown}
+    >
+      {options.map((o, i) => (
         <button
           key={String(o.value)}
+          ref={(el) => {
+            buttons.current[i] = el
+          }}
           type="button"
           role="radio"
           aria-checked={o.value === value}
+          tabIndex={i === checked ? 0 : -1}
           className={`pt-choice-item${o.value === value ? ' active' : ''}`}
           disabled={disabled}
-          onClick={() => onChange(o.value)}
+          // re-picking the current option is a no-op: Split's onChange resets typed ranges
+          onClick={() => {
+            if (o.value !== value) onChange(o.value)
+          }}
         >
           <span className="pt-choice-label">{o.label}</span>
           {o.desc && <span className="pt-choice-desc">{o.desc}</span>}
         </button>
       ))}
+    </div>
+  )
+}
+
+/**
+ * A titled option group. Deliberately not a <label> like Field: a label forwards
+ * clicks on its text (and its empty space) to its first button, which silently
+ * switched the choice to the first option.
+ */
+function ChoiceField<V extends string | number>({
+  label,
+  hint,
+  ...choice
+}: ChoiceProps<V> & { label: string; hint?: string }) {
+  const labelId = useId()
+  return (
+    <div className="pt-field">
+      <span className="pt-field-label" id={labelId}>
+        {label}
+      </span>
+      <Choice {...choice} labelledBy={labelId} />
+      {hint && <span className="pt-field-hint">{hint}</span>}
     </div>
   )
 }
@@ -152,26 +208,25 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
       const opts = o as ToolOptions['split']
       return (
         <>
-          <Field label={t('splitHow')}>
-            <Choice
-              value={opts.kind}
-              disabled={disabled}
-              options={[
-                { value: 'every', label: t('splitEvery') },
-                { value: 'ranges', label: t('splitRanges') },
-                { value: 'pages', label: t('splitSingle') },
-              ]}
-              onChange={(kind) =>
-                props.onChange(
-                  (kind === 'every'
-                    ? { kind, size: 1 }
-                    : kind === 'ranges'
-                      ? { kind, ranges: '' }
-                      : { kind, pages: '' }) as ToolOptions[T],
-                )
-              }
-            />
-          </Field>
+          <ChoiceField
+            label={t('splitHow')}
+            value={opts.kind}
+            disabled={disabled}
+            options={[
+              { value: 'every', label: t('splitEvery') },
+              { value: 'ranges', label: t('splitRanges') },
+              { value: 'pages', label: t('splitSingle') },
+            ]}
+            onChange={(kind) =>
+              props.onChange(
+                (kind === 'every'
+                  ? { kind, size: 1 }
+                  : kind === 'ranges'
+                    ? { kind, ranges: '' }
+                    : { kind, pages: '' }) as ToolOptions[T],
+              )
+            }
+          />
           {opts.kind === 'every' && (
             <Field label={t('splitSize')}>
               <input
@@ -225,18 +280,17 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
       const opts = o as ToolOptions['rotate']
       return (
         <>
-          <Field label={t('rotateAngle')}>
-            <Choice
-              value={opts.angle}
-              disabled={disabled}
-              options={[
-                { value: 90, label: t('rotateRight') },
-                { value: 180, label: t('rotate180') },
-                { value: 270, label: t('rotateLeft') },
-              ]}
-              onChange={(angle) => set({ angle })}
-            />
-          </Field>
+          <ChoiceField
+            label={t('rotateAngle')}
+            value={opts.angle}
+            disabled={disabled}
+            options={[
+              { value: 90, label: t('rotateRight') },
+              { value: 180, label: t('rotate180') },
+              { value: 270, label: t('rotateLeft') },
+            ]}
+            onChange={(angle) => set({ angle })}
+          />
           <PagesInput
             label="pagesRotate"
             value={opts.pages}
@@ -276,18 +330,17 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
     case 'compress': {
       const opts = o as ToolOptions['compress']
       return (
-        <Field label={t('compressLevel')}>
-          <Choice
-            value={opts.level}
-            disabled={disabled}
-            options={[
-              { value: 'strong', label: t('compressStrong'), desc: t('compressStrongDesc') },
-              { value: 'balanced', label: t('compressBalanced'), desc: t('compressBalancedDesc') },
-              { value: 'light', label: t('compressLight'), desc: t('compressLightDesc') },
-            ]}
-            onChange={(level) => set({ level })}
-          />
-        </Field>
+        <ChoiceField
+          label={t('compressLevel')}
+          value={opts.level}
+          disabled={disabled}
+          options={[
+            { value: 'strong', label: t('compressStrong'), desc: t('compressStrongDesc') },
+            { value: 'balanced', label: t('compressBalanced'), desc: t('compressBalancedDesc') },
+            { value: 'light', label: t('compressLight'), desc: t('compressLightDesc') },
+          ]}
+          onChange={(level) => set({ level })}
+        />
       )
     }
     case 'images-to-pdf': {
@@ -314,30 +367,28 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
           </Field>
           {paper && (
             <>
-              <Field label={t('orientation')}>
-                <Choice
-                  value={opts.orientation}
-                  disabled={disabled}
-                  options={[
-                    { value: 'auto', label: t('orientationAuto') },
-                    { value: 'portrait', label: t('orientationPortrait') },
-                    { value: 'landscape', label: t('orientationLandscape') },
-                  ]}
-                  onChange={(orientation) => set({ orientation })}
-                />
-              </Field>
-              <Field label={t('margin')}>
-                <Choice
-                  value={opts.margin}
-                  disabled={disabled}
-                  options={[
-                    { value: 0, label: t('marginNone') },
-                    { value: 18, label: t('marginSmall') },
-                    { value: 42, label: t('marginLarge') },
-                  ]}
-                  onChange={(margin) => set({ margin })}
-                />
-              </Field>
+              <ChoiceField
+                label={t('orientation')}
+                value={opts.orientation}
+                disabled={disabled}
+                options={[
+                  { value: 'auto', label: t('orientationAuto') },
+                  { value: 'portrait', label: t('orientationPortrait') },
+                  { value: 'landscape', label: t('orientationLandscape') },
+                ]}
+                onChange={(orientation) => set({ orientation })}
+              />
+              <ChoiceField
+                label={t('margin')}
+                value={opts.margin}
+                disabled={disabled}
+                options={[
+                  { value: 0, label: t('marginNone') },
+                  { value: 18, label: t('marginSmall') },
+                  { value: 42, label: t('marginLarge') },
+                ]}
+                onChange={(margin) => set({ margin })}
+              />
             </>
           )}
         </>
@@ -347,29 +398,27 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
       const opts = o as ToolOptions['pdf-to-images']
       return (
         <>
-          <Field label={t('imageFormat')}>
-            <Choice
-              value={opts.format}
-              disabled={disabled}
-              options={[
-                { value: 'png', label: 'PNG' },
-                { value: 'jpeg', label: 'JPG' },
-              ]}
-              onChange={(format) => set({ format })}
-            />
-          </Field>
-          <Field label={t('resolution')}>
-            <Choice
-              value={opts.dpi}
-              disabled={disabled}
-              options={[
-                { value: 72, label: t('resolutionScreen') },
-                { value: 150, label: t('resolutionStandard') },
-                { value: 300, label: t('resolutionPrint') },
-              ]}
-              onChange={(dpi) => set({ dpi })}
-            />
-          </Field>
+          <ChoiceField
+            label={t('imageFormat')}
+            value={opts.format}
+            disabled={disabled}
+            options={[
+              { value: 'png', label: 'PNG' },
+              { value: 'jpeg', label: 'JPG' },
+            ]}
+            onChange={(format) => set({ format })}
+          />
+          <ChoiceField
+            label={t('resolution')}
+            value={opts.dpi}
+            disabled={disabled}
+            options={[
+              { value: 72, label: t('resolutionScreen') },
+              { value: 150, label: t('resolutionStandard') },
+              { value: 300, label: t('resolutionPrint') },
+            ]}
+            onChange={(dpi) => set({ dpi })}
+          />
           {opts.format === 'jpeg' && (
             <Field label={`${t('jpegQuality')} · ${opts.quality}`}>
               <input
@@ -493,30 +542,28 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
               />
             </Field>
           </div>
-          <Field label={t('angle')}>
-            <Choice
-              value={String(opts.rotation)}
-              disabled={disabled}
-              options={[
-                { value: 'diagonal', label: t('angleDiagonal') },
-                { value: '0', label: t('angleHorizontal') },
-                { value: '90', label: t('angleVertical') },
-              ]}
-              onChange={(v) => set({ rotation: v === 'diagonal' ? 'diagonal' : Number(v) })}
-            />
-          </Field>
-          <Field label={t('position')}>
-            <Choice
-              value={opts.position}
-              disabled={disabled}
-              options={[
-                { value: 'center', label: t('positionCenter') },
-                { value: 'top', label: t('positionTop') },
-                { value: 'bottom', label: t('positionBottom') },
-              ]}
-              onChange={(position) => set({ position })}
-            />
-          </Field>
+          <ChoiceField
+            label={t('angle')}
+            value={String(opts.rotation)}
+            disabled={disabled}
+            options={[
+              { value: 'diagonal', label: t('angleDiagonal') },
+              { value: '0', label: t('angleHorizontal') },
+              { value: '90', label: t('angleVertical') },
+            ]}
+            onChange={(v) => set({ rotation: v === 'diagonal' ? 'diagonal' : Number(v) })}
+          />
+          <ChoiceField
+            label={t('position')}
+            value={opts.position}
+            disabled={disabled}
+            options={[
+              { value: 'center', label: t('positionCenter') },
+              { value: 'top', label: t('positionTop') },
+              { value: 'bottom', label: t('positionBottom') },
+            ]}
+            onChange={(position) => set({ position })}
+          />
           <PagesInput
             label="pagesStamp"
             value={opts.pages}
@@ -531,22 +578,21 @@ export function ToolOptionsForm<T extends ToolId>(props: Props<T>) {
       const opts = o as ToolOptions['page-numbers']
       return (
         <>
-          <Field label={t('numberFormat')}>
-            <Choice
-              value={opts.format}
-              disabled={disabled}
-              options={[
-                { value: '{n}', label: '1' },
-                { value: t('formatPage'), label: t('formatPage', { n: 1 }) },
-                {
-                  value: t('formatPageOf'),
-                  label: t('formatPageOf', { n: 1, total: 'N' }),
-                },
-                { value: '- {n} -', label: '- 1 -' },
-              ]}
-              onChange={(format) => set({ format })}
-            />
-          </Field>
+          <ChoiceField
+            label={t('numberFormat')}
+            value={opts.format}
+            disabled={disabled}
+            options={[
+              { value: '{n}', label: '1' },
+              { value: t('formatPage'), label: t('formatPage', { n: 1 }) },
+              {
+                value: t('formatPageOf'),
+                label: t('formatPageOf', { n: 1, total: 'N' }),
+              },
+              { value: '- {n} -', label: '- 1 -' },
+            ]}
+            onChange={(format) => set({ format })}
+          />
           <Field label={t('position')}>
             <select
               className="pt-input pt-input-narrow"

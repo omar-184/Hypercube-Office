@@ -26,7 +26,7 @@ test('redaction stays in the current tab and accumulates on its working copy', a
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
     editor.on('dialog', (dialog) => dialog.accept())
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await editor.getByRole('button', { name: 'Redact area', exact: true }).click()
     const mark = async (top: number, bottom: number) => {
       const box = await editor.locator('.pdf-redaction-layer').first().boundingBox()

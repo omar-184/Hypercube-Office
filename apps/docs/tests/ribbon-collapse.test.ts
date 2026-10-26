@@ -1,5 +1,6 @@
-// Word for Mac model: the selected tab collapses, any tab expands (and stays
-// expanded), the collapsed tab row has no selected tab.
+// Office for Windows model: pressing the selected tab does nothing (it used to
+// collapse, Word for Mac style); double-click and Ctrl+F1 collapse, any tab
+// expands (and stays expanded), the collapsed tab row has no selected tab.
 import { beforeEach, describe, expect, it } from 'vitest'
 import { act, createElement, useState } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -52,17 +53,25 @@ describe('ribbon collapse', () => {
     act(() => createRoot(host).render(createElement(Ribbon)))
   })
 
-  it('pressing the selected tab collapses; pressing another tab only switches', () => {
+  it('pressing a tab only switches, even when it is already selected', () => {
     click('insert')
     expect(collapsed()).toBe(false)
     expect($('insert').className).toContain('active')
     click('insert')
-    expect(collapsed()).toBe(true)
-    expect(localStorage.getItem('t.ribbon')).toBe('1')
+    expect(collapsed()).toBe(false)
+    expect($('insert').className).toContain('active')
+    expect(localStorage.getItem('t.ribbon')).toBeNull()
   })
 
+  // a single press no longer collapses, so the double-click is the mouse way in
+  const collapseByDoubleClick = (id: string) => {
+    click(id)
+    click(id)
+    act(() => $(id).dispatchEvent(new MouseEvent('dblclick', { bubbles: true })))
+  }
+
   it('while collapsed no tab is selected and every tab offers Expand', () => {
-    click('home')
+    collapseByDoubleClick('home')
     expect($('home').className).not.toContain('active')
     expect($('insert').className).not.toContain('active')
     expect($('home').dataset.tip).toBe($('insert').dataset.tip)
@@ -70,11 +79,13 @@ describe('ribbon collapse', () => {
   })
 
   it('pressing any tab while collapsed expands for good (no peek)', () => {
-    click('home')
+    collapseByDoubleClick('home')
+    expect(collapsed()).toBe(true)
     click('insert')
     expect(collapsed()).toBe(false)
     expect($('insert').className).toContain('active')
-    expect($('insert').dataset.tip).toMatch(/^Collapse \(/)
+    // the selected tab no longer offers Collapse: pressing it does nothing
+    expect($('insert').dataset.tip).toBeUndefined()
     expect($('home').dataset.tip).toBeUndefined()
     act(() => {
       document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }))

@@ -212,6 +212,7 @@ export function HeaderFooterTab({
           <div className="rb-col">
             <button
               className={`rb-small ${info.linked ? 'active' : ''}`}
+              aria-pressed={!!info.linked}
               disabled={info.linked === null}
               data-tip={t('ribbonHfLinkPrevTip')}
               onClick={() => act({ type: 'linkToPrevious', on: !info.linked })}
@@ -230,6 +231,7 @@ export function HeaderFooterTab({
           <div className="rb-col">
             <button
               className={`rb-small ${info.titlePg ? 'active' : ''}`}
+              aria-pressed={!!info.titlePg}
               data-tip={t('ribbonDiffFirstPageTip')}
               onClick={() => act({ type: 'titlePg', on: !info.titlePg })}
             >
@@ -237,6 +239,7 @@ export function HeaderFooterTab({
             </button>
             <button
               className={`rb-small ${info.evenOddHf ? 'active' : ''}`}
+              aria-pressed={!!info.evenOddHf}
               data-tip={t('ribbonDiffOddEvenTip')}
               onClick={() => act({ type: 'evenOddHf', on: !info.evenOddHf })}
             >

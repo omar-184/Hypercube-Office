@@ -830,6 +830,7 @@ export function ReviewTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${spellcheck ? 'active' : ''}`}
+            aria-pressed={!!spellcheck}
             disabled={!hasDoc}
             data-tip={t('ribbonSpellcheckTip')}
             onClick={() => onSpellcheck(!spellcheck)}
@@ -945,6 +946,7 @@ export function ReviewTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${trackChanges ? 'active' : ''}`}
+            aria-pressed={!!trackChanges}
             disabled={!hasDoc || isProtected || trackChangesForced}
             data-tip={t('ribbonTrackChangesTip')}
             onClick={() => onTrackChanges(!trackChanges)}
@@ -1202,6 +1204,7 @@ export function ViewTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${viewMode === 'print' && !readMode ? 'active' : ''}`}
+            aria-pressed={viewMode === 'print' && !readMode}
             disabled={!hasDoc}
             data-tip={t('ribbonPrintLayoutTip')}
             onClick={() => {
@@ -1216,6 +1219,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${viewMode === 'web' ? 'active' : ''}`}
+            aria-pressed={viewMode === 'web'}
             disabled={!hasDoc}
             data-tip={t('ribbonWebLayoutTip')}
             onClick={() => onViewMode(viewMode === 'web' ? 'print' : 'web')}
@@ -1227,6 +1231,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${viewMode === 'outline' ? 'active' : ''}`}
+            aria-pressed={viewMode === 'outline'}
             disabled={!hasDoc}
             data-tip={t('ribbonOutlineViewTip')}
             onClick={() => onViewMode(viewMode === 'outline' ? 'print' : 'outline')}
@@ -1238,6 +1243,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${readMode ? 'active' : ''}`}
+            aria-pressed={!!readMode}
             disabled={!hasDoc}
             data-tip={t('ribbonReadModeTip')}
             onClick={() => onReadMode(!readMode)}
@@ -1342,6 +1348,7 @@ export function ViewTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${darkPage ? 'active' : ''}`}
+            aria-pressed={!!darkPage}
             data-tip={t('ribbonDarkModeTip')}
             onClick={() => onDarkPage(!darkPage)}
           >
@@ -1360,6 +1367,7 @@ export function ViewTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${showRuler ? 'active' : ''}`}
+            aria-pressed={!!showRuler}
             disabled={!hasDoc}
             data-tip={t('ribbonRulerTip')}
             onClick={() => onShowRuler(!showRuler)}
@@ -1371,6 +1379,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${showGrid ? 'active' : ''}`}
+            aria-pressed={!!showGrid}
             disabled={!hasDoc}
             data-tip={t('ribbonGridlinesTip')}
             onClick={() => onShowGrid(!showGrid)}
@@ -1382,6 +1391,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${showNav ? 'active' : ''}`}
+            aria-pressed={!!showNav}
             disabled={!hasDoc}
             data-tip={t('ribbonNavPaneTip')}
             onClick={() => onShowNav(!showNav)}
@@ -1411,6 +1421,7 @@ export function ViewTab({
           </button>
           <button
             className={`rb-big ${splitView ? 'active' : ''}`}
+            aria-pressed={!!splitView}
             disabled={!hasDoc}
             data-tip={t('ribbonSplitTip')}
             onClick={() => onSplitView(!splitView)}
@@ -1516,6 +1527,7 @@ export function DrawTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${tool === 'select' ? 'active' : ''}`}
+            aria-pressed={tool === 'select'}
             disabled={!hasDoc}
             data-tip={t('ribbonSelectTip')}
             onClick={() => onTool('select')}
@@ -1533,6 +1545,7 @@ export function DrawTab({
         <div className="ribbon-group-items">
           <button
             className={`rb-big ${tool === 'pen' ? 'active' : ''}`}
+            aria-pressed={tool === 'pen'}
             disabled={!hasDoc}
             data-tip={t('ribbonPenTip')}
             onClick={() => onTool('pen')}
@@ -1544,6 +1557,7 @@ export function DrawTab({
           </button>
           <button
             className={`rb-big ${tool === 'highlighter' ? 'active' : ''}`}
+            aria-pressed={tool === 'highlighter'}
             disabled={!hasDoc}
             data-tip={t('ribbonHighlighterTip')}
             onClick={() => onTool('highlighter')}
@@ -1555,6 +1569,7 @@ export function DrawTab({
           </button>
           <button
             className={`rb-big ${tool === 'eraser' ? 'active' : ''}`}
+            aria-pressed={tool === 'eraser'}
             disabled={!hasDoc}
             data-tip={t('ribbonEraserTip')}
             onClick={() => onTool('eraser')}
@@ -1575,6 +1590,7 @@ export function DrawTab({
               <button
                 key={hex}
                 className={`ink-swatch ${active.color === hex ? 'active' : ''}`}
+                aria-pressed={active.color === hex}
                 style={{ background: `#${hex}` }}
                 data-tip={`#${hex}`}
                 aria-label={`#${hex}`}
@@ -1588,6 +1604,7 @@ export function DrawTab({
               <button
                 key={w}
                 className={`ink-width ${active.width === w ? 'active' : ''}`}
+                aria-pressed={active.width === w}
                 data-tip={t('ribbonPixels', { w })}
                 aria-label={t('ribbonPixels', { w })}
                 disabled={!hasDoc}

@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactElement } from 'react'
+import type {
+  CSSProperties,
+  KeyboardEvent as ReactKeyboardEvent,
+  PointerEvent as ReactPointerEvent,
+  ReactElement,
+} from 'react'
 import type { TabsApi, TabSummary } from '../../shared/tabs-api'
 import { TEAR_OFF_SLACK, insertionIndexForX, isBeyondBand } from '../../shared/tab-drag-geometry'
 import { notifyFilesChanged } from './file-events'
@@ -421,6 +426,39 @@ export function TabBar() {
 
   // keep the active tab in view — new tabs open at the far end of the strip
   const activeId = tabs.find((tab) => tab.active)?.id
+
+  // one Tab stop for the strip (the active tab); arrows walk the others
+  const [focusId, setFocusId] = useState<string | null>(null)
+  const tabStopId = tabs.some((tab) => tab.id === focusId) ? focusId : activeId
+  const focusTab = (id: string) => {
+    setFocusId(id)
+    stripRef.current?.querySelector<HTMLElement>(`[data-tab-id="${CSS.escape(id)}"]`)?.focus()
+  }
+  const onTabKeyDown = (event: ReactKeyboardEvent, tab: TabSummary, index: number) => {
+    if (renaming?.id === tab.id) return
+    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl'
+    const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[event.key]
+    if (step !== undefined) {
+      focusTab(tabs[(index + step + tabs.length) % tabs.length].id)
+    } else if (event.key === 'Home') {
+      focusTab(tabs[0].id)
+    } else if (event.key === 'End') {
+      focusTab(tabs[tabs.length - 1].id)
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      void window.hyperFilesTabs.activate(tab.id)
+    } else if (event.key === 'Delete' && tab.closable) {
+      void window.hyperFilesTabs.close(tab.id)
+    } else if (event.key === 'F2' && tab.id !== 'home' && tab.filePath) {
+      setRenaming({ id: tab.id, value: tab.title })
+    } else if (event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey)) {
+      if (tab.id === 'home') return
+      const rect = event.currentTarget.getBoundingClientRect()
+      void window.hyperFilesTabs.showTabMenu(tab.id, Math.round(rect.left), Math.round(rect.bottom))
+    } else {
+      return
+    }
+    event.preventDefault()
+  }
   useEffect(() => {
     // pointer-down activation runs while the user is pressing that tab — it is
     // already visible, and scrolling the strip mid-press would invalidate the
@@ -457,6 +495,8 @@ export function TabBar() {
       <div
         className={`tab-strip ${dragVisual ? 'dragging' : ''} ${dockX !== null ? 'dock-target' : ''}`}
         ref={stripRef}
+        role="tablist"
+        aria-label={t('openTabs')}
         // the strip, not the grabbed tab, owns the pointer capture: a torn-off
         // tab's element unmounts mid-gesture, and the moves must keep coming
         onPointerMove={handleDragMove}
@@ -484,6 +524,13 @@ export function TabBar() {
             <div
               key={tab.id}
               className={`tab-item ${tab.kind === 'home' ? 'tab-home' : ''} ${tab.active ? 'active' : ''} ${dragVisual?.id === tab.id ? 'drag-source' : ''}`}
+              role="tab"
+              aria-selected={tab.active}
+              aria-label={tab.title}
+              tabIndex={tab.id === tabStopId ? 0 : -1}
+              data-tab-id={tab.id}
+              onKeyDown={(event) => onTabKeyDown(event, tab, index)}
+              onFocus={() => setFocusId(tab.id)}
               // long file names ellipsize in the strip — hover reveals the
               // full title (the close button's own tooltip still wins there)
               title={tab.title}
@@ -573,6 +620,8 @@ export function TabBar() {
               {tab.closable && (
                 <button
                   className="tab-close"
+                  // the tab owns the keyboard: Delete closes it
+                  tabIndex={-1}
                   title={t('closeTab')}
                   aria-label={t('closeTab')}
                   onClick={(event) => {

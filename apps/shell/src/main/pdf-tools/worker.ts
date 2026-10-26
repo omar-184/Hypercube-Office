@@ -10,7 +10,14 @@ import {
   createVisionOcrEngine,
   createWindowsOcrEngine,
 } from '../../../../../packages/pdf2docx/src/ocr-vision'
-import type { FileInfo, ToolRequest, ToolResult } from '../../shared/pdf-tools-api'
+import type {
+  FileInfo,
+  ToolProgress,
+  ToolRequest,
+  ToolResult,
+  ToolResultItem,
+} from '../../shared/pdf-tools-api'
+import { REPORTED, RUNNING, WRITING, cancelSlot } from './control'
 import { fileInfo, runRequest } from './jobs'
 
 export interface WorkerInit {
@@ -18,6 +25,8 @@ export interface WorkerInit {
   mupdfPath: string
   /** system OCR helper binary; null when this computer has none */
   ocrHelperPath: string | null
+  /** shared with the runner; layout in control.ts */
+  control: SharedArrayBuffer
 }
 
 export type WorkerRequest =
@@ -27,9 +36,12 @@ export type WorkerRequest =
 export type WorkerMessage =
   | { id: number; type: 'run'; result: ToolResult }
   | { id: number; type: 'info'; info: FileInfo }
-  | { id: number; type: 'progress'; done: number; total: number }
+  | { id: number; type: 'progress'; progress: ToolProgress }
+  /** one input finished, so a run stopped mid-file still reports the ones before it */
+  | { id: number; type: 'item'; item: ToolResultItem }
 
-const { mupdfPath, ocrHelperPath } = workerData as WorkerInit
+const { mupdfPath, ocrHelperPath, control } = workerData as WorkerInit
+const ctl = new Int32Array(control)
 
 /** The OCR engine is only started by the OCR tool, never on open. */
 let ocr: OcrRecognizer | null | undefined
@@ -57,17 +69,34 @@ parentPort?.on('message', async (req: WorkerRequest) => {
     parentPort?.postMessage({ id: req.id, type: 'info', info } satisfies WorkerMessage)
     return
   }
+  const { id } = req
+  const post = (msg: WorkerMessage) => parentPort?.postMessage(msg)
+  const canceled = () => Atomics.load(ctl, cancelSlot(id)) === id
+  Atomics.store(ctl, REPORTED, 0)
+  Atomics.store(ctl, RUNNING, id)
   const result = runRequest(
     m,
     req.request,
-    (done, total) =>
-      parentPort?.postMessage({
-        id: req.id,
-        type: 'progress',
-        done,
-        total,
-      } satisfies WorkerMessage),
-    req.request.tool === 'ocr' ? { ocr: ocrEngine() } : {},
+    (progress) => post({ id, type: 'progress', progress }),
+    {
+      ...(req.request.tool === 'ocr' ? { ocr: ocrEngine() } : {}),
+      onItem(item) {
+        post({ id, type: 'item', item })
+        Atomics.add(ctl, REPORTED, 1)
+      },
+      control: {
+        canceled,
+        beginWrite() {
+          // raise the flag, then look: the runner sets cancel, then looks at the
+          // flag, so one of the two always sees the other
+          Atomics.store(ctl, WRITING, 1)
+          if (!canceled()) return true
+          Atomics.store(ctl, WRITING, 0)
+          return false
+        },
+        endWrite: () => Atomics.store(ctl, WRITING, 0),
+      },
+    },
   )
-  parentPort?.postMessage({ id: req.id, type: 'run', result } satisfies WorkerMessage)
+  post({ id, type: 'run', result })
 })

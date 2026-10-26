@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/omar-184/Hyper-Files.git"
+    "url": "git+https://github.com/omar-184/Hypercube-Office.git"
   },
   "workspaces": [
     "apps/*",

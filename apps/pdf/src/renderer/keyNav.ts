@@ -26,7 +26,7 @@ export function shouldHandleDocumentUndo(
   key: string,
   modifier: boolean,
 ): boolean {
-  if (!modifier || key.toLowerCase() !== 'z') return true
+  if (!modifier || !['z', 'y'].includes(key.toLowerCase())) return true
   return !usesNativeTextUndo(target)
 }
 

@@ -27,7 +27,7 @@ test('form fields are placed on the page, named, saved and then fillable', async
   try {
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Prepare form', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Prepare form', exact: true }).click()
 
     const layer = editor.locator('.pdf-page .pdf-draw-layer').first()
     const box = await layer.boundingBox()

@@ -118,7 +118,7 @@ test('saving into a signed PDF asks first; cancel keeps the file, Save Anyway as
     await stubDialogs(launched.app, join(dir, 'unused.pdf'))
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await addTextBox(editor, 'First note', 0.2)
 
     // Cancel: the warning shows and the signed file is left byte-identical
@@ -161,7 +161,7 @@ test('Save as a Copy keeps the signed original and writes the edits to the copy'
     await stubDialogs(launched.app, copy)
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await addTextBox(editor, 'Reviewed', 0.3)
 
     await answerNext(launched.app, 'Save as a Copy…')

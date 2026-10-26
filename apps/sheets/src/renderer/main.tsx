@@ -3,6 +3,7 @@ import { htmlDir, htmlLang, type Lang } from '@genoffice/i18n'
 import { installScreenTips } from '@genoffice/ui'
 
 import '@genoffice/ui/tokens.css'
+import '@genoffice/ui/a11y.css'
 import '@genoffice/ui/screentip.css'
 import '@genoffice/ui/color-picker.css'
 import '@genoffice/ui/dropdown.css'

@@ -34,6 +34,9 @@ export type UiTheme = 'light' | 'dark' | 'system'
  */
 export type DocTheme = 'follow' | 'light' | 'dark'
 
+/** the legal texts shipped with the app: the AGPL-3.0 license, or the third-party notices */
+export type LegalNotice = 'license' | 'notices'
+
 /** shell-wide AutoSave default for every editor; updatedAt is 0 until first set */
 export interface AutoSaveDefault {
   on: boolean
@@ -247,6 +250,8 @@ export interface HomeApi {
   onDocumentThemeChanged(handler: (theme: DocTheme) => void): () => void
   /** open the public GitHub repository in the default browser */
   openGitHubRepo(): Promise<void>
+  /** open a shipped legal text in the system's text viewer; false when it could not be opened */
+  openLegalNotice(which: LegalNotice): Promise<boolean>
   /** opt-in update check setting and the last result this session */
   getUpdateCheck(): Promise<UpdateCheckStatus>
   /** turn the opt-in update check on or off (persisted in userData/app-settings.json) */
@@ -390,6 +395,7 @@ export const HOME_CHANNELS = {
   setDefaultApp: 'home:set-default-app',
   pickDefaultSaveDir: 'home:pick-default-save-dir',
   openGitHubRepo: 'home:open-github-repo',
+  openLegalNotice: 'home:open-legal-notice',
   getUpdateCheck: 'home:get-update-check',
   setUpdateCheck: 'home:set-update-check',
   checkForUpdates: 'home:check-for-updates',

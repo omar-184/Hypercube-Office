@@ -1497,6 +1497,7 @@ export function FormatPane({
           <button
             type="button"
             className={`fp-tab ${effTab === 'shape' ? 'active' : ''}`}
+            aria-pressed={effTab === 'shape'}
             onClick={() => setPaneTab('shape')}
           >
             {t('paneFormatTabShape')}
@@ -1504,6 +1505,7 @@ export function FormatPane({
           <button
             type="button"
             className={`fp-tab ${effTab === 'text' ? 'active' : ''}`}
+            aria-pressed={effTab === 'text'}
             onClick={() => setPaneTab('text')}
           >
             {t('paneFormatTabText')}
@@ -1529,6 +1531,7 @@ export function FormatPane({
               key={k}
               type="button"
               className={`fp-subtab ${sub === k ? 'active' : ''}`}
+              aria-pressed={sub === k}
               onClick={() =>
                 effTab === 'shape'
                   ? setShapeSub(k as 'fill' | 'effects' | 'size')
@@ -1998,6 +2001,7 @@ export function FormatPane({
                   <button
                     key={k}
                     className={`fp-btn ${(shape.text?.anchor ?? 'top') === k ? 'active' : ''}`}
+                    aria-pressed={(shape.text?.anchor ?? 'top') === k}
                     onClick={() => onTextAnchor(node.sourceId, k)}
                   >
                     {label}

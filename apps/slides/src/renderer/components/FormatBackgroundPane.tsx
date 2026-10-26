@@ -105,6 +105,7 @@ export function FormatBackgroundPane({ slide, onApply, onCollapse }: Props) {
           <div className="fp-row">
             <button
               className={`fp-btn fp-btn-wrap ${mode === 'solid' ? 'active' : ''}`}
+              aria-pressed={mode === 'solid'}
               onClick={() => {
                 setPickedMode('solid')
                 if (currentMode !== 'solid') onApply({ kind: 'solid', color: solidColor })
@@ -114,6 +115,7 @@ export function FormatBackgroundPane({ slide, onApply, onCollapse }: Props) {
             </button>
             <button
               className={`fp-btn fp-btn-wrap ${mode === 'gradient' ? 'active' : ''}`}
+              aria-pressed={mode === 'gradient'}
               onClick={() => {
                 setPickedMode('gradient')
                 if (currentMode !== 'gradient')
@@ -124,6 +126,7 @@ export function FormatBackgroundPane({ slide, onApply, onCollapse }: Props) {
             </button>
             <button
               className={`fp-btn fp-btn-wrap ${mode === 'image' ? 'active' : ''}`}
+              aria-pressed={mode === 'image'}
               onClick={() => {
                 setPickedMode('image')
                 if (currentMode !== 'image') onApply({ kind: 'image', mode: 'stretch', pick: true })
@@ -203,6 +206,7 @@ export function FormatBackgroundPane({ slide, onApply, onCollapse }: Props) {
                   <button
                     key={m}
                     className={`fp-btn ${bg?.kind === 'image' && imageMode === m ? 'active' : ''}`}
+                    aria-pressed={bg?.kind === 'image' && imageMode === m}
                     disabled={bg?.kind !== 'image'}
                     onClick={() => onApply({ kind: 'image', mode: m, pick: false })}
                   >

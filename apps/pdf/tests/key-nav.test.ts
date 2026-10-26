@@ -45,6 +45,8 @@ describe('shouldHandleDocumentUndo', () => {
       expect(shouldHandleDocumentUndo(input, 'z', true), type).toBe(false)
     }
     expect(shouldHandleDocumentUndo(document.createElement('textarea'), 'Z', true)).toBe(false)
+    // Ctrl+Y (Windows redo) in a text field is the field's own redo too
+    expect(shouldHandleDocumentUndo(document.createElement('textarea'), 'y', true)).toBe(false)
     const editable = document.createElement('div')
     Object.defineProperty(editable, 'isContentEditable', { value: true })
     expect(shouldHandleDocumentUndo(editable, 'z', true)).toBe(false)

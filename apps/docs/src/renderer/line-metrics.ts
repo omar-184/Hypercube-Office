@@ -2205,7 +2205,8 @@ export interface LineMetricsResultEx extends LineMetricsResult {
   lineBoxes: LineBox[]
 }
 
-const DEFAULT_FONT_FAMILY = 'Calibri'
+/** the face the page renders in when no style, default or run names one */
+export const DEFAULT_FONT_FAMILY = 'Calibri'
 const DEFAULT_FONT_SIZE_PT = 12
 
 /** global default HeuristicMetrics instance (avoids rebuilding per call) */
