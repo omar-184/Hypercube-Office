@@ -12,23 +12,40 @@ declare global {
   }
 }
 
-/** Home's PDF tools area: a grid of tools, then one tool's panel. */
-export function PdfToolsView() {
+/**
+ * Home's PDF tools area: a grid of tools, then one tool's panel. Home keeps it
+ * mounted but hidden while another view shows, so a run keeps its progress
+ * and its result.
+ */
+export function PdfToolsView({
+  hidden = false,
+  onBusyChange,
+}: {
+  hidden?: boolean
+  /** must be stable: it is left out of effect dependencies */
+  onBusyChange?: (busy: boolean) => void
+}) {
   const { t } = useToolsI18n()
   const [active, setActive] = useState<ToolId | null>(null)
 
   if (active) {
     return (
-      <main className="content">
+      <main className="content" hidden={hidden}>
         <div className="pt-content">
-          <ToolPanel key={active} tool={active} initialPaths={[]} onBack={() => setActive(null)} />
+          <ToolPanel
+            key={active}
+            tool={active}
+            initialPaths={[]}
+            onBack={() => setActive(null)}
+            onBusyChange={onBusyChange}
+          />
         </div>
       </main>
     )
   }
 
   return (
-    <main className="content">
+    <main className="content" hidden={hidden}>
       <div className="pt-content">
         <header className="pt-head">
           <h1 className="hero-title">{t('title')}</h1>

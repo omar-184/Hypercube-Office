@@ -487,6 +487,103 @@
   color: var(--text-secondary);
 }
 
+/* ── a run going on ── */
+
+.pt-progress {
+  margin: 18px 0 40px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-12);
+  background: var(--surface);
+}
+
+.pt-progress-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pt-progress-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-progress-time {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-progress .btn[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pt-bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--border);
+}
+
+.pt-bar-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* one step with nothing to count: a sliding segment */
+.pt-bar.indeterminate .pt-bar-fill {
+  width: 30%;
+  animation: pt-bar-slide 1.4s ease-in-out infinite;
+}
+
+[dir='rtl'] .pt-bar.indeterminate .pt-bar-fill {
+  animation-name: pt-bar-slide-rtl;
+}
+
+@keyframes pt-bar-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+@keyframes pt-bar-slide-rtl {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-340%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-bar.indeterminate .pt-bar-fill {
+    width: 100%;
+    opacity: 0.45;
+    animation: none;
+  }
+}
+
+.pt-file.run-working .pt-file-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.pt-file.run-finished .pt-file-meta {
+  color: var(--text-secondary);
+}
+
 .pt-small-btn {
   padding: 4px 12px;
   font-size: 13px;
@@ -507,6 +604,21 @@
 
 .pt-results-title.failed {
   color: var(--danger);
+}
+
+.pt-results-title.canceled {
+  color: var(--text-primary);
+}
+
+/* focused from script when the outcome shows, never by Tab */
+.pt-results-title:focus {
+  outline: none;
+}
+
+.pt-results-note {
+  margin: 0 0 8px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
 }
 
 .pt-results .pt-files {

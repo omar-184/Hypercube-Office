@@ -5,6 +5,9 @@
  */
 export const en = {
   navTools: 'PDF Tools',
+  navToolsBusy: 'Working',
+  navToolsDone: 'Finished',
+  toolsFinished: 'PDF Tools finished',
   title: 'PDF tools',
   subtitle: 'Everything runs on this computer. Your files never leave it.',
 
@@ -189,7 +192,13 @@ export const en = {
 
   start: 'Start',
   working: 'Working…',
-  workingProgress: 'Working… {done} of {total}',
+  progressFile: 'File {n} of {total}',
+  progressPage: 'Page {n} of {total}',
+  elapsed: '{time} elapsed',
+  cancel: 'Cancel',
+  canceling: 'Stopping…',
+  fileWaiting: 'Waiting',
+  fileFinished: 'Finished',
   needFiles: 'Add a file to start',
   needTwo: 'Add at least two files to merge',
   needUnlock: 'Unlock every file first',
@@ -197,6 +206,9 @@ export const en = {
   doneTitle: 'Done',
   doneSome: 'Done, with problems',
   doneFailed: 'That did not work',
+  canceledTitle: 'Canceled',
+  canceledSome: 'Stopped after {done} of {total} files. The rest were left as they were.',
+  canceledNone: 'Stopped before anything was saved.',
   open: 'Open',
   showInFolder: 'Show in folder',
   outputsMany: '{n} files',

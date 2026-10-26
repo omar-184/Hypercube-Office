@@ -90,14 +90,36 @@ export function registerPdfToolsIpc(workerPath: string): PdfToolsRunner {
     return runner.info(path, typeof password === 'string' && password ? password : undefined)
   })
 
-  ipcMain.handle(PDF_TOOLS_CHANNELS.run, (event, raw: unknown) => {
+  /** runs in flight per window, so Cancel stops only that window's work */
+  const inFlight = new Map<number, Set<AbortController>>()
+
+  ipcMain.handle(PDF_TOOLS_CHANNELS.run, async (event, raw: unknown) => {
     if (!validRequest(raw)) return badRequest('the request could not be read')
     const sender = event.sender
-    return runner.run(raw, (done, total) => {
-      if (!sender.isDestroyed()) {
-        sender.send(PDF_TOOLS_CHANNELS.progress, { done, total } satisfies ToolProgress)
-      }
-    })
+    const abort = new AbortController()
+    let runs = inFlight.get(sender.id)
+    if (!runs) inFlight.set(sender.id, (runs = new Set()))
+    runs.add(abort)
+    // a window closed mid-run takes its work with it
+    const onGone = () => abort.abort()
+    sender.once('destroyed', onGone)
+    try {
+      return await runner.run(
+        raw,
+        (progress: ToolProgress) => {
+          if (!sender.isDestroyed()) sender.send(PDF_TOOLS_CHANNELS.progress, progress)
+        },
+        abort.signal,
+      )
+    } finally {
+      runs.delete(abort)
+      if (runs.size === 0) inFlight.delete(sender.id)
+      if (!sender.isDestroyed()) sender.removeListener('destroyed', onGone)
+    }
+  })
+
+  ipcMain.handle(PDF_TOOLS_CHANNELS.cancel, (event) => {
+    for (const abort of inFlight.get(event.sender.id) ?? []) abort.abort()
   })
 
   app.on('will-quit', () => runner.stop())

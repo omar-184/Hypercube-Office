@@ -833,8 +833,21 @@ export function Home() {
   const [navCounts, setNavCounts] = useState({ recent: 0, starred: 0 })
   const [loadingMore, setLoadingMore] = useState(false)
   const [view, setView] = useState<'recent' | 'starred'>('recent')
-  // the PDF tools area replaces the file lists while open
+  // the PDF tools area replaces the file lists while open; once opened it
+  // stays mounted (hidden) so a run survives a look at another view
   const [toolsOpen, setToolsOpen] = useState(false)
+  const [toolsMounted, setToolsMounted] = useState(false)
+  const [toolsBusy, setToolsBusy] = useState(false)
+  /** a run finished while another view showed */
+  const [toolsUnseen, setToolsUnseen] = useState(false)
+  const toolsOpenRef = useRef(toolsOpen)
+  toolsOpenRef.current = toolsOpen
+  const toolsBusyRef = useRef(false)
+  const onToolsBusy = useCallback((busy: boolean) => {
+    if (toolsBusyRef.current && !busy && !toolsOpenRef.current) setToolsUnseen(true)
+    toolsBusyRef.current = busy
+    setToolsBusy(busy)
+  }, [])
   const { t: tTools } = useToolsI18n()
   const [filter, setFilter] = useState('all')
   // ── File search (names + indexed content); active while the box has text ──
@@ -2652,6 +2665,8 @@ export function Home() {
             className={`nav-item${toolsOpen ? ' active' : ''}`}
             onClick={() => {
               setToolsOpen(true)
+              setToolsMounted(true)
+              setToolsUnseen(false)
               setSelectedFolder(null)
               setSelected(new Set())
               setRowMenu(null)
@@ -2666,19 +2681,29 @@ export function Home() {
               />
             </svg>
             <span className="nav-label">{tTools('navTools')}</span>
+            {(toolsBusy || toolsUnseen) && (
+              <span
+                className={`nav-badge${toolsBusy ? ' busy' : ''}`}
+                role="img"
+                aria-label={tTools(toolsBusy ? 'navToolsBusy' : 'navToolsDone')}
+                title={tTools(toolsBusy ? 'navToolsBusy' : 'navToolsDone')}
+              />
+            )}
           </button>
         </nav>
+        <span className="sr-only" role="status">
+          {toolsUnseen ? tTools('toolsFinished') : ''}
+        </span>
         <div className="sidebar-divider" />
         {renderFolderPanel()}
         <SettingsEntry />
       </aside>
-      {toolsOpen ? (
-        <PdfToolsView />
-      ) : selectedFolder && rootOf(selectedFolder, roots)?.readable ? (
-        renderFolderContent()
-      ) : (
-        renderGlobalContent()
-      )}
+      {toolsMounted && <PdfToolsView hidden={!toolsOpen} onBusyChange={onToolsBusy} />}
+      {toolsOpen
+        ? null
+        : selectedFolder && rootOf(selectedFolder, roots)?.readable
+          ? renderFolderContent()
+          : renderGlobalContent()}
       {confirmDelete && (
         <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
           <div

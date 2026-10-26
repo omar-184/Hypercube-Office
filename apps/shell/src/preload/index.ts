@@ -421,6 +421,7 @@ const pdfToolsApi: PdfToolsApi = {
   pickFolder: () => ipcRenderer.invoke(PDF_TOOLS_CHANNELS.pickFolder),
   info: (path, password) => ipcRenderer.invoke(PDF_TOOLS_CHANNELS.info, path, password),
   run: (request) => ipcRenderer.invoke(PDF_TOOLS_CHANNELS.run, request),
+  cancel: () => ipcRenderer.invoke(PDF_TOOLS_CHANNELS.cancel),
   onProgress(handler) {
     const listener = (_event: IpcRendererEvent, progress: ToolProgress) => handler(progress)
     ipcRenderer.on(PDF_TOOLS_CHANNELS.progress, listener)

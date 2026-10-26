@@ -154,7 +154,15 @@ export interface ToolResultItem {
   error?: ToolError
 }
 
-export type ToolResult = { ok: true; items: ToolResultItem[] } | { ok: false; error: ToolError }
+export type ToolResult =
+  | {
+      ok: true
+      /** one per input finished, in input order (a canceled run lists the ones done before it stopped) */
+      items: ToolResultItem[]
+      /** the user stopped the run; inputs after the last item were not touched */
+      canceled?: boolean
+    }
+  | { ok: false; error: ToolError }
 
 export type FileInfo =
   | {
@@ -169,9 +177,12 @@ export type FileInfo =
   | { ok: false; error: ToolError }
 
 export interface ToolProgress {
-  /** input files finished so far (OCR: pages of the current file) */
+  /** input files finished so far; the one being worked on is `done` (0-based) */
   done: number
   total: number
+  /** OCR: pages of the current file recognized so far, out of `pagesTotal` */
+  pagesDone?: number
+  pagesTotal?: number
 }
 
 export interface PdfToolsApi {
@@ -181,6 +192,13 @@ export interface PdfToolsApi {
   /** page count / encryption for the file list; checks the password when given */
   info(path: string, password?: string): Promise<FileInfo>
   run(request: ToolRequest): Promise<ToolResult>
+  /**
+   * Stop this window's running request. It ends at the next file or page, or
+   * at once when one step is long; outputs already written are kept and a
+   * half-written file is never left behind. run() then resolves with
+   * `canceled: true`.
+   */
+  cancel(): Promise<void>
   onProgress(handler: (progress: ToolProgress) => void): () => void
   /** path of a File dropped on the tools panel (Electron hides it from the DOM) */
   pathForFile(file: File): string
@@ -191,5 +209,6 @@ export const PDF_TOOLS_CHANNELS = {
   pickFolder: 'pdf-tools:pick-folder',
   info: 'pdf-tools:info',
   run: 'pdf-tools:run',
+  cancel: 'pdf-tools:cancel',
   progress: 'pdf-tools:progress',
 } as const
