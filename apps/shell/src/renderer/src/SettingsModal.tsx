@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Dropdown } from '@genoffice/ui'
+import { Dropdown, useModalKeys } from '@genoffice/ui'
 import type {
   DefaultAppStatus,
   DocTheme,
@@ -189,13 +189,8 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
     }
   }, [])
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onClose])
+  // Esc closes, Tab stays inside, and focus goes back to Settings on close
+  const modalKeys = useModalKeys(onClose, { restoreFocus: true })
 
   const applyTheme = (next: UiTheme) => {
     setTheme(next)
@@ -332,14 +327,23 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
   return (
     <div
       className="set-overlay"
+      ref={modalKeys.ref}
+      onKeyDown={modalKeys.onKeyDown}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="set-dialog" role="dialog" aria-modal="true" aria-label={t('settings')}>
+      <div className="set-dialog" role="dialog" aria-modal="true" aria-labelledby="set-title">
         <div className="set-header">
-          <h2 className="set-title">{t('settings')}</h2>
-          <button className="set-close" onClick={onClose} aria-label={t('cancel')}>
+          <h2 className="set-title" id="set-title">
+            {t('settings')}
+          </h2>
+          <button
+            className="set-close"
+            onClick={onClose}
+            aria-label={t('close')}
+            title={t('close')}
+          >
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
               <path
                 d="M2 2l10 10M12 2L2 12"
@@ -356,7 +360,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
               <button
                 key={s.id}
                 className={`set-nav-item${section === s.id ? ' active' : ''}`}
-                aria-current={section === s.id}
+                aria-current={section === s.id ? 'page' : undefined}
                 onClick={() => setSection(s.id)}
               >
                 <SectionIcon id={s.id} />
@@ -370,7 +374,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                 <h3 className="set-pane-title">{t('setSecGeneral')}</h3>
                 <div className="set-field">
                   <div className="set-field-text">
-                    <label className="set-field-label">{t('language')}</label>
+                    <div className="set-field-label">{t('language')}</div>
                   </div>
                   <Dropdown
                     className="set-dd"
@@ -382,7 +386,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                 </div>
                 <div className="set-field">
                   <div className="set-field-text">
-                    <label className="set-field-label">{t('theme')}</label>
+                    <div className="set-field-label">{t('theme')}</div>
                   </div>
                   <Dropdown
                     className="set-dd"
@@ -397,7 +401,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                 </div>
                 <div className="set-field">
                   <div className="set-field-text">
-                    <label className="set-field-label">{t('documentTheme')}</label>
+                    <div className="set-field-label">{t('documentTheme')}</div>
                   </div>
                   <Dropdown
                     className="set-dd"
@@ -477,7 +481,8 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                     className="set-switch"
                     role="switch"
                     aria-checked={updatesOn}
-                    aria-label={t('setUpdates')}
+                    aria-label={t('setUpdatesAuto')}
+                    title={t('setUpdatesAuto')}
                     onClick={toggleUpdates}
                   />
                 </div>

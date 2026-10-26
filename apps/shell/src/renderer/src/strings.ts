@@ -134,6 +134,8 @@ export const strings = {
     setNotices: '第三方声明',
     setNoticesDesc: '所用的其他开源项目组件及其许可证。',
     setViewNotices: '查看声明',
+    close: '关闭',
+    setUpdatesAuto: '每天自动检查一次',
     setChange: '更改',
     setUpdates: '检查更新',
     setUpdatesDesc:
@@ -340,6 +342,8 @@ export const strings = {
     setNotices: 'Third-party notices',
     setNoticesDesc: 'Components from other open-source projects and their licenses.',
     setViewNotices: 'View notices',
+    close: 'Close',
+    setUpdatesAuto: 'Check automatically once a day',
     setChange: 'Change',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -549,6 +553,8 @@ export const strings = {
     setNotices: 'Thông báo bên thứ ba',
     setNoticesDesc: 'Các thành phần từ dự án mã nguồn mở khác và giấy phép của chúng.',
     setViewNotices: 'Xem thông báo',
+    close: 'Đóng',
+    setUpdatesAuto: 'Tự động kiểm tra mỗi ngày một lần',
     setChange: 'Thay đổi',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -767,6 +773,8 @@ export const strings = {
     setNotices: 'サードパーティの表示',
     setNoticesDesc: '使用している他のオープンソース プロジェクトのコンポーネントとそのライセンス。',
     setViewNotices: '表示を開く',
+    close: '閉じる',
+    setUpdatesAuto: '1 日 1 回自動で確認',
     setChange: '変更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -984,6 +992,8 @@ export const strings = {
     setNotices: '타사 고지',
     setNoticesDesc: '사용된 다른 오픈 소스 프로젝트의 구성 요소와 해당 라이선스입니다.',
     setViewNotices: '고지 보기',
+    close: '닫기',
+    setUpdatesAuto: '하루에 한 번 자동으로 확인',
     setChange: '변경',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1205,6 +1215,8 @@ export const strings = {
     setNotices: 'Mentions tierces',
     setNoticesDesc: 'Composants d’autres projets open source et leurs licences.',
     setViewNotices: 'Voir les mentions',
+    close: 'Fermer',
+    setUpdatesAuto: 'Vérifier automatiquement une fois par jour',
     setChange: 'Modifier',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1429,6 +1441,8 @@ export const strings = {
     setNotices: 'Hinweise zu Drittanbietern',
     setNoticesDesc: 'Komponenten anderer Open-Source-Projekte und ihre Lizenzen.',
     setViewNotices: 'Hinweise anzeigen',
+    close: 'Schließen',
+    setUpdatesAuto: 'Einmal täglich automatisch prüfen',
     setChange: 'Ändern',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1651,6 +1665,8 @@ export const strings = {
     setNotices: 'Avisos de terceros',
     setNoticesDesc: 'Componentes de otros proyectos de código abierto y sus licencias.',
     setViewNotices: 'Ver avisos',
+    close: 'Cerrar',
+    setUpdatesAuto: 'Comprobar automáticamente una vez al día',
     setChange: 'Cambiar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1868,6 +1884,8 @@ export const strings = {
     setNotices: 'ประกาศของบุคคลที่สาม',
     setNoticesDesc: 'ส่วนประกอบจากโครงการโอเพนซอร์สอื่นและสัญญาอนุญาต',
     setViewNotices: 'ดูประกาศ',
+    close: 'ปิด',
+    setUpdatesAuto: 'ตรวจสอบอัตโนมัติวันละครั้ง',
     setChange: 'เปลี่ยน',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2089,6 +2107,8 @@ export const strings = {
     setNotices: 'Pemberitahuan pihak ketiga',
     setNoticesDesc: 'Komponen dari proyek sumber terbuka lain beserta lisensinya.',
     setViewNotices: 'Lihat pemberitahuan',
+    close: 'Tutup',
+    setUpdatesAuto: 'Periksa otomatis sekali sehari',
     setChange: 'Ubah',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2309,6 +2329,8 @@ export const strings = {
     setNotices: 'Сторонние компоненты',
     setNoticesDesc: 'Компоненты других проектов с открытым исходным кодом и их лицензии.',
     setViewNotices: 'Открыть список',
+    close: 'Закрыть',
+    setUpdatesAuto: 'Проверять автоматически раз в день',
     setChange: 'Изменить',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2527,6 +2549,8 @@ export const strings = {
     setNotices: 'إشعارات الجهات الخارجية',
     setNoticesDesc: 'مكوّنات من مشاريع مفتوحة المصدر أخرى وتراخيصها.',
     setViewNotices: 'عرض الإشعارات',
+    close: 'إغلاق',
+    setUpdatesAuto: 'التحقق تلقائيًا مرة واحدة يوميًا',
     setChange: 'تغيير',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2738,6 +2762,8 @@ export const strings = {
     setNotices: 'Avisos de terceiros',
     setNoticesDesc: 'Componentes de outros projetos de código aberto e suas licenças.',
     setViewNotices: 'Ver avisos',
+    close: 'Fechar',
+    setUpdatesAuto: 'Verificar automaticamente uma vez por dia',
     setChange: 'Alterar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2949,6 +2975,8 @@ export const strings = {
     setNotices: 'Note di terze parti',
     setNoticesDesc: 'Componenti di altri progetti open source e relative licenze.',
     setViewNotices: 'Visualizza note',
+    close: 'Chiudi',
+    setUpdatesAuto: 'Controlla automaticamente una volta al giorno',
     setChange: 'Cambia',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3161,6 +3189,8 @@ export const strings = {
     setNotices: 'Komponenty innych firm',
     setNoticesDesc: 'Komponenty z innych projektów open source i ich licencje.',
     setViewNotices: 'Pokaż listę',
+    close: 'Zamknij',
+    setUpdatesAuto: 'Sprawdzaj automatycznie raz dziennie',
     setChange: 'Zmień',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3360,6 +3390,8 @@ export const strings = {
     setNotices: 'Oznámení třetích stran',
     setNoticesDesc: 'Součásti z jiných open-source projektů a jejich licence.',
     setViewNotices: 'Zobrazit oznámení',
+    close: 'Zavřít',
+    setUpdatesAuto: 'Kontrolovat automaticky jednou denně',
     setChange: 'Změnit',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3581,6 +3613,8 @@ export const strings = {
     setNotices: 'Kennisgevingen van derden',
     setNoticesDesc: 'Onderdelen uit andere opensourceprojecten en hun licenties.',
     setViewNotices: 'Kennisgevingen bekijken',
+    close: 'Sluiten',
+    setUpdatesAuto: 'Eenmaal per dag automatisch controleren',
     setChange: 'Wijzigen',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3792,6 +3826,8 @@ export const strings = {
     setNotices: 'Notis pihak ketiga',
     setNoticesDesc: 'Komponen daripada projek sumber terbuka lain dan lesennya.',
     setViewNotices: 'Lihat notis',
+    close: 'Tutup',
+    setUpdatesAuto: 'Semak secara automatik sekali sehari',
     setChange: 'Tukar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4000,6 +4036,8 @@ export const strings = {
     setNotices: 'הודעות צד שלישי',
     setNoticesDesc: 'רכיבים מפרויקטים אחרים בקוד פתוח והרישיונות שלהם.',
     setViewNotices: 'הצגת ההודעות',
+    close: 'סגירה',
+    setUpdatesAuto: 'בדיקה אוטומטית פעם ביום',
     setChange: 'שינוי',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4212,6 +4250,8 @@ export const strings = {
     setNotices: 'तृतीय-पक्ष सूचनाएँ',
     setNoticesDesc: 'अन्य ओपन-सोर्स परियोजनाओं के घटक और उनके लाइसेंस।',
     setViewNotices: 'सूचनाएँ देखें',
+    close: 'बंद करें',
+    setUpdatesAuto: 'दिन में एक बार अपने-आप जाँचें',
     setChange: 'बदलें',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4419,6 +4459,8 @@ export const strings = {
     setNotices: '第三方聲明',
     setNoticesDesc: '所使用的其他開放原始碼專案元件及其授權條款。',
     setViewNotices: '檢視聲明',
+    close: '關閉',
+    setUpdatesAuto: '每天自動檢查一次',
     setChange: '變更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
