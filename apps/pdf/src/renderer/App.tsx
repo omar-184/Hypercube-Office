@@ -1177,6 +1177,17 @@ export default function App() {
         // write was in flight stay pending, with page indices remapped through the
         // saved deletions/reorder (a page missing from pageMap is gone from the file).
         const remap = saved.pageMap
+        // Each bucket's ref mirror moves with its state (cf. updateImageEdits): an edit
+        // committed before this reload renders reduces from the refs (applyEditOps), and
+        // a ref still listing the saved entries would put them back as pending.
+        const advance = <T,>(
+          ref: { current: T },
+          set: (fn: (prev: T) => T) => void,
+          fn: (prev: T) => T,
+        ) => {
+          ref.current = fn(ref.current)
+          set(fn)
+        }
         setOutline((prev) => (prev ? remapOutlinePages(prev, remap) : prev))
         // Redaction marks are deliberately omitted from ordinary saves. Keep them
         // through the reload, remapping their original page indices if this save
@@ -1189,14 +1200,14 @@ export default function App() {
               : [ni === mark.pageIndex ? mark : { ...mark, pageIndex: ni }]
           }),
         )
-        setMarkups((prev) =>
+        advance(markupsRef, setMarkups, (prev) =>
           prev.flatMap((mk) => {
             if (saved.markupIds.has(mk.id)) return []
             const ni = remap.get(mk.pageIndex)
             return ni === undefined ? [] : [ni === mk.pageIndex ? mk : { ...mk, pageIndex: ni }]
           }),
         )
-        setAnnotDeletes((prev) =>
+        advance(annotDeletesRef, setAnnotDeletes, (prev) =>
           prev.flatMap((d) => {
             if (saved.annotDeleteIds.has(d.id)) return []
             const ni = remap.get(d.annot.pageIndex)
@@ -1206,7 +1217,7 @@ export default function App() {
             return [ni === d.annot.pageIndex ? d : { ...d, annot: { ...d.annot, pageIndex: ni } }]
           }),
         )
-        setNoteEdits((prev) =>
+        advance(noteEditsRef, setNoteEdits, (prev) =>
           prev.flatMap((e) => {
             if (saved.noteEditIds.has(e.id)) return []
             const ni = remap.get(e.annot.pageIndex)
@@ -1221,7 +1232,7 @@ export default function App() {
             return [{ ...e, annot: { ...e.annot, pageIndex: ni, contents } }]
           }),
         )
-        setDrawings((prev) =>
+        advance(drawingsRef, setDrawings, (prev) =>
           prev.flatMap((dr) => {
             if (saved.drawingIds.has(dr.id)) return []
             const ni = remap.get(dr.input.pageIndex)
@@ -1278,10 +1289,12 @@ export default function App() {
         })
         // Config-style state: identity compare against the snapshot — unchanged means
         // it is in the file now, a new object means the user changed it during the save
-        setStampCfg((prev) => (prev === saved.stampCfg ? null : prev))
-        setMetadata((prev) => (prev === saved.metadata ? null : prev))
-        setOutlineEdit((prev) => (prev === saved.outlineEdit ? null : prev))
-        setFormEdits((prev) => {
+        advance(stampRef, setStampCfg, (prev) => (prev === saved.stampCfg ? null : prev))
+        advance(metadataRef, setMetadata, (prev) => (prev === saved.metadata ? null : prev))
+        advance(outlineEditRef, setOutlineEdit, (prev) =>
+          prev === saved.outlineEdit ? null : prev,
+        )
+        advance(formEditsRef, setFormEdits, (prev) => {
           const next = new Map<string, FormValueInput>()
           for (const [k, v] of prev) if (saved.formEdits.get(k) !== v) next.set(k, v)
           return next
@@ -1294,7 +1307,7 @@ export default function App() {
         }
         rotationsRef.current = nextRotations
         setRotations(nextRotations)
-        setDeleted((prev) => {
+        advance(deletedRef, setDeleted, (prev) => {
           const next = new Set<number>()
           // Saved deletions are absent from pageMap; the rest were deleted mid-save
           for (const oldIdx of prev) {
@@ -1303,7 +1316,7 @@ export default function App() {
           }
           return next
         })
-        setOrder((prev) => {
+        advance(orderRef, setOrder, (prev) => {
           if (!prev) return null
           const mapped = prev.flatMap((o) => {
             const ni = remap.get(o)
@@ -3571,10 +3584,11 @@ export default function App() {
   /** The in-flight save's page remap (old original index → index in the saved file);
       Save As addresses late note edits through it once that save has rewritten pages */
   const inFlightPageMapRef = useRef<Map<number, number> | null>(null)
-  /** Saves requested while another save was writing, drained by an effect after the
-      post-save reload has committed. Running the follow-up straight off the completion
-      promise would reuse the pre-reload render's closure — dirty still true, the saved
-      edits still listed — and write them onto the file a second time. */
+  /** Saves requested while another save was writing, or from a render that predates the
+      last save's reload, drained by an effect after the post-save reload has committed.
+      Running the follow-up straight off the completion promise would reuse the
+      pre-reload render's closure — dirty still true, the saved edits still listed — and
+      write them onto the file a second time. */
   const queuedSavesRef = useRef<{ autosave: boolean; resolve: (ok: boolean) => void }[]>([])
   /** Saves finished so far. The ref moves when a save ends; the state copy moves in the same
       batch as that save's post-reload updates, so a commit carrying the new count has them. */
@@ -3590,6 +3604,10 @@ export default function App() {
     // still reads 'idle' for both.
     if (
       saveInFlightRef.current !== null ||
+      // a save finished after this render: its reload is not on screen yet and this
+      // closure still lists what it wrote. A keypress handled just before React re-binds
+      // the handler lands here and would write those edits a second time.
+      savesFinished !== savesFinishedRef.current ||
       // a bookmark edit is resolving, or landed after this render: save from the next one
       outlineEditsPendingRef.current > 0 ||
       outlineEditRef.current !== outlineEdit
