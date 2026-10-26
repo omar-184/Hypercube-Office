@@ -5,6 +5,7 @@ import type { Lang } from '@genoffice/i18n'
 export const PDF_CHANNELS = {
   consumePending: 'pdf:consume-pending',
   readFile: 'pdf:read-file',
+  confirmFlush: 'pdf:confirm-flush',
   save: 'pdf:save',
   requestRedactionCopy: 'pdf:request-redaction-copy',
   autoRename: 'pdf:auto-rename',
@@ -762,6 +763,8 @@ export interface PdfApi {
   consumePending(): Promise<string | null>
   /** Read pdf bytes. Only paths granted to this view are allowed */
   readFile(path: string): Promise<ArrayBuffer>
+  /** Before a tool saves pending edits into a file not yet saved this session: true = save and go on */
+  confirmFlush(path: string): Promise<boolean>
   /** Write markups/form values/page ops back to the original file (pdf-lib, content streams untouched); path grants same as readFile. With targetPath set (Save As), the original is only read and the result goes to targetPath */
   save(request: SavePdfRequest): Promise<SavePdfResult>
   /** Creates a redacted working copy on first apply; subsequent applies save that copy in place. */

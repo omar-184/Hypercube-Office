@@ -111,6 +111,10 @@ const tDlg = createI18n({
     btnSaveCopy: '另存为副本…',
     btnSaveAnyway: '仍然保存',
     btnChangeAnyway: '仍然更改',
+    flushMsg: '先保存更改吗？',
+    flushDetail:
+      '此操作基于磁盘上的文件进行，因此会先把未保存的更改保存到“{name}”中。若要保留原文件不变，请取消并先使用“另存为”。',
+    btnSaveContinue: '保存并继续',
   },
   en: {
     dlgExportImages: 'Export Images to Folder',
@@ -137,6 +141,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Save as a Copy…',
     btnSaveAnyway: 'Save Anyway',
     btnChangeAnyway: 'Change Anyway',
+    flushMsg: 'Save your changes first?',
+    flushDetail:
+      'This works from the file on disk, so your unsaved changes will be saved into “{name}” before it runs. To keep the original unchanged, cancel and use Save As first.',
+    btnSaveContinue: 'Save and Continue',
   },
   vi: {
     dlgExportImages: 'Xuất hình ảnh vào thư mục',
@@ -163,6 +171,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Lưu thành bản sao…',
     btnSaveAnyway: 'Vẫn lưu',
     btnChangeAnyway: 'Vẫn thay đổi',
+    flushMsg: 'Lưu thay đổi trước?',
+    flushDetail:
+      'Thao tác này dùng tệp trên ổ đĩa, nên các thay đổi chưa lưu sẽ được lưu vào “{name}” trước khi chạy. Để giữ nguyên tệp gốc, hãy hủy và dùng Lưu thành trước.',
+    btnSaveContinue: 'Lưu và tiếp tục',
   },
   ja: {
     dlgExportImages: '画像をフォルダに書き出す',
@@ -189,6 +201,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'コピーとして保存…',
     btnSaveAnyway: 'このまま保存',
     btnChangeAnyway: 'このまま変更',
+    flushMsg: '先に変更を保存しますか？',
+    flushDetail:
+      'この操作はディスク上のファイルを基に行うため、実行前に未保存の変更が「{name}」に保存されます。元のファイルを変更せずに残すには、キャンセルして先に「名前を付けて保存」を使用してください。',
+    btnSaveContinue: '保存して続行',
   },
   ko: {
     dlgExportImages: '이미지를 폴더로 내보내기',
@@ -215,6 +231,10 @@ const tDlg = createI18n({
     btnSaveCopy: '사본으로 저장…',
     btnSaveAnyway: '그래도 저장',
     btnChangeAnyway: '그래도 변경',
+    flushMsg: '변경 내용을 먼저 저장할까요?',
+    flushDetail:
+      '이 작업은 디스크의 파일을 기준으로 실행되므로, 실행 전에 저장되지 않은 변경 내용이 "{name}"에 저장됩니다. 원본을 그대로 두려면 취소한 후 먼저 다른 이름으로 저장을 사용하세요.',
+    btnSaveContinue: '저장 후 계속',
   },
   fr: {
     dlgExportImages: 'Exporter les images vers un dossier',
@@ -241,6 +261,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Enregistrer une copie…',
     btnSaveAnyway: 'Enregistrer quand même',
     btnChangeAnyway: 'Modifier quand même',
+    flushMsg: 'Enregistrer vos modifications d’abord ?',
+    flushDetail:
+      'Cette opération utilise le fichier sur le disque : vos modifications non enregistrées seront enregistrées dans « {name} » avant de l’exécuter. Pour garder l’original intact, annulez et utilisez d’abord Enregistrer sous.',
+    btnSaveContinue: 'Enregistrer et continuer',
   },
   de: {
     dlgExportImages: 'Bilder in Ordner exportieren',
@@ -267,6 +291,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Als Kopie speichern…',
     btnSaveAnyway: 'Trotzdem speichern',
     btnChangeAnyway: 'Trotzdem ändern',
+    flushMsg: 'Änderungen zuerst speichern?',
+    flushDetail:
+      'Dieser Vorgang arbeitet mit der Datei auf dem Datenträger. Ihre nicht gespeicherten Änderungen werden daher zuerst in „{name}“ gespeichert. Um das Original unverändert zu lassen, brechen Sie ab und verwenden Sie zuerst „Speichern unter“.',
+    btnSaveContinue: 'Speichern und fortfahren',
   },
   es: {
     dlgExportImages: 'Exportar imágenes a una carpeta',
@@ -293,6 +321,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Guardar como copia…',
     btnSaveAnyway: 'Guardar de todos modos',
     btnChangeAnyway: 'Cambiar de todos modos',
+    flushMsg: '¿Guardar los cambios primero?',
+    flushDetail:
+      'Esta acción trabaja con el archivo en disco, así que los cambios sin guardar se guardarán en «{name}» antes de ejecutarla. Para conservar el original sin cambios, cancele y use primero Guardar como.',
+    btnSaveContinue: 'Guardar y continuar',
   },
   th: {
     dlgExportImages: 'ส่งออกรูปภาพไปยังโฟลเดอร์',
@@ -319,6 +351,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'บันทึกเป็นสำเนา…',
     btnSaveAnyway: 'บันทึกต่อไป',
     btnChangeAnyway: 'เปลี่ยนแปลงต่อไป',
+    flushMsg: 'บันทึกการเปลี่ยนแปลงก่อนหรือไม่',
+    flushDetail:
+      'การดำเนินการนี้ทำงานจากไฟล์บนดิสก์ จึงจะบันทึกการเปลี่ยนแปลงที่ยังไม่ได้บันทึกลงใน “{name}” ก่อน หากต้องการเก็บต้นฉบับไว้ตามเดิม ให้ยกเลิกแล้วใช้ “บันทึกเป็น” ก่อน',
+    btnSaveContinue: 'บันทึกและดำเนินการต่อ',
   },
   id: {
     dlgExportImages: 'Ekspor gambar ke folder',
@@ -345,6 +381,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Simpan sebagai Salinan…',
     btnSaveAnyway: 'Tetap Simpan',
     btnChangeAnyway: 'Tetap Ubah',
+    flushMsg: 'Simpan perubahan dulu?',
+    flushDetail:
+      'Tindakan ini bekerja dari file di disk, jadi perubahan yang belum disimpan akan disimpan ke “{name}” terlebih dahulu. Agar file asli tidak berubah, batalkan lalu gunakan Simpan Sebagai terlebih dahulu.',
+    btnSaveContinue: 'Simpan dan lanjutkan',
   },
   ru: {
     dlgExportImages: 'Экспорт изображений в папку',
@@ -371,6 +411,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Сохранить как копию…',
     btnSaveAnyway: 'Всё равно сохранить',
     btnChangeAnyway: 'Всё равно изменить',
+    flushMsg: 'Сначала сохранить изменения?',
+    flushDetail:
+      'Эта операция работает с файлом на диске, поэтому несохранённые изменения сначала будут сохранены в «{name}». Чтобы оставить исходный файл без изменений, отмените действие и сначала выберите «Сохранить как».',
+    btnSaveContinue: 'Сохранить и продолжить',
   },
   ar: {
     dlgExportImages: 'تصدير الصور إلى مجلد',
@@ -397,6 +441,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'حفظ كنسخة…',
     btnSaveAnyway: 'الحفظ على أي حال',
     btnChangeAnyway: 'التغيير على أي حال',
+    flushMsg: 'هل تريد حفظ التغييرات أولاً؟',
+    flushDetail:
+      'يعمل هذا الإجراء على الملف المحفوظ على القرص، لذا ستُحفظ تغييراتك غير المحفوظة في "{name}" قبل تنفيذه. للإبقاء على الملف الأصلي دون تغيير، ألغِ العملية واستخدم "حفظ باسم" أولاً.',
+    btnSaveContinue: 'حفظ ومتابعة',
   },
   pt: {
     dlgExportImages: 'Exportar imagens para pasta',
@@ -423,6 +471,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Salvar como cópia…',
     btnSaveAnyway: 'Salvar mesmo assim',
     btnChangeAnyway: 'Alterar mesmo assim',
+    flushMsg: 'Salvar as alterações primeiro?',
+    flushDetail:
+      'Esta ação usa o arquivo no disco, então as alterações não salvas serão salvas em “{name}” antes de ser executada. Para manter o original inalterado, cancele e use Salvar como primeiro.',
+    btnSaveContinue: 'Salvar e continuar',
   },
   it: {
     dlgExportImages: 'Esporta immagini in una cartella',
@@ -449,6 +501,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Salva come copia…',
     btnSaveAnyway: 'Salva comunque',
     btnChangeAnyway: 'Modifica comunque',
+    flushMsg: 'Salvare prima le modifiche?',
+    flushDetail:
+      'Questa operazione usa il file su disco, quindi le modifiche non salvate verranno salvate in «{name}» prima di eseguirla. Per lasciare invariato l’originale, annulla e usa prima Salva con nome.',
+    btnSaveContinue: 'Salva e continua',
   },
   pl: {
     dlgExportImages: 'Eksportuj obrazy do folderu',
@@ -475,6 +531,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Zapisz jako kopię…',
     btnSaveAnyway: 'Zapisz mimo to',
     btnChangeAnyway: 'Zmień mimo to',
+    flushMsg: 'Najpierw zapisać zmiany?',
+    flushDetail:
+      'Ta operacja korzysta z pliku na dysku, więc niezapisane zmiany zostaną najpierw zapisane w „{name}”. Aby zachować oryginał bez zmian, anuluj i najpierw użyj polecenia Zapisz jako.',
+    btnSaveContinue: 'Zapisz i kontynuuj',
   },
   cs: {
     dlgExportImages: 'Exportovat obrázky do složky',
@@ -501,6 +561,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Uložit jako kopii…',
     btnSaveAnyway: 'Přesto uložit',
     btnChangeAnyway: 'Přesto změnit',
+    flushMsg: 'Nejprve uložit změny?',
+    flushDetail:
+      'Tato akce pracuje se souborem na disku, takže neuložené změny se nejprve uloží do „{name}“. Chcete-li ponechat originál beze změny, zrušte akci a nejprve použijte Uložit jako.',
+    btnSaveContinue: 'Uložit a pokračovat',
   },
   nl: {
     dlgExportImages: 'Afbeeldingen naar map exporteren',
@@ -527,6 +591,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Opslaan als kopie…',
     btnSaveAnyway: 'Toch opslaan',
     btnChangeAnyway: 'Toch wijzigen',
+    flushMsg: 'Eerst je wijzigingen opslaan?',
+    flushDetail:
+      'Deze actie werkt met het bestand op schijf, dus je niet-opgeslagen wijzigingen worden eerst in ‘{name}’ opgeslagen. Wil je het origineel ongewijzigd laten, annuleer dan en gebruik eerst Opslaan als.',
+    btnSaveContinue: 'Opslaan en doorgaan',
   },
   ms: {
     dlgExportImages: 'Eksport imej ke folder',
@@ -553,6 +621,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'Simpan sebagai Salinan…',
     btnSaveAnyway: 'Simpan Juga',
     btnChangeAnyway: 'Ubah Juga',
+    flushMsg: 'Simpan perubahan dahulu?',
+    flushDetail:
+      'Tindakan ini menggunakan fail pada cakera, jadi perubahan yang belum disimpan akan disimpan ke dalam “{name}” dahulu. Untuk mengekalkan fail asal, batalkan dan gunakan Simpan Sebagai dahulu.',
+    btnSaveContinue: 'Simpan dan teruskan',
   },
   he: {
     dlgExportImages: 'ייצוא תמונות לתיקייה',
@@ -579,6 +651,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'שמור כעותק…',
     btnSaveAnyway: 'שמור בכל זאת',
     btnChangeAnyway: 'שנה בכל זאת',
+    flushMsg: 'לשמור קודם את השינויים?',
+    flushDetail:
+      'פעולה זו עובדת מהקובץ שבדיסק, ולכן השינויים שלא נשמרו יישמרו קודם ב־"{name}". כדי להשאיר את המקור ללא שינוי, בטלו והשתמשו קודם ב"שמירה בשם".',
+    btnSaveContinue: 'שמירה והמשך',
   },
   hi: {
     dlgExportImages: 'चित्र फ़ोल्डर में निर्यात करें',
@@ -605,6 +681,10 @@ const tDlg = createI18n({
     btnSaveCopy: 'प्रति के रूप में सहेजें…',
     btnSaveAnyway: 'फिर भी सहेजें',
     btnChangeAnyway: 'फिर भी बदलें',
+    flushMsg: 'पहले अपने बदलाव सहेजें?',
+    flushDetail:
+      'यह कार्य डिस्क पर रखी फ़ाइल से चलता है, इसलिए आपके बिना सहेजे बदलाव पहले "{name}" में सहेजे जाएँगे। मूल फ़ाइल को जैसा है वैसा रखने के लिए रद्द करें और पहले "इस रूप में सहेजें" का उपयोग करें।',
+    btnSaveContinue: 'सहेजें और जारी रखें',
   },
   'zh-TW': {
     dlgExportImages: '匯出圖片到資料夾',
@@ -631,6 +711,10 @@ const tDlg = createI18n({
     btnSaveCopy: '另存為副本…',
     btnSaveAnyway: '仍要儲存',
     btnChangeAnyway: '仍要變更',
+    flushMsg: '要先儲存變更嗎？',
+    flushDetail:
+      '此操作以磁碟上的檔案為準，因此會先將未儲存的變更存入「{name}」。若要保留原始檔案不變，請取消並先使用「另存新檔」。',
+    btnSaveContinue: '儲存並繼續',
   },
 })
 
@@ -678,6 +762,9 @@ type DlgKey =
   | 'btnSaveCopy'
   | 'btnSaveAnyway'
   | 'btnChangeAnyway'
+  | 'flushMsg'
+  | 'flushDetail'
+  | 'btnSaveContinue'
 const tm = (key: DlgKey) => tDlg(getUiLang(), key)
 
 interface RuntimePaths {
@@ -1120,6 +1207,28 @@ function registerPdfIpc(): void {
     } catch {
       return ''
     }
+  })
+
+  // Page tools, print and image export read the file on disk, so pending edits are
+  // saved into it first. Until the user has saved this file once, the renderer asks
+  // here before that save: the autosave gate's rule that a PDF opened to read is
+  // never overwritten behind the user's back.
+  ipcMain.handle(PDF_CHANNELS.confirmFlush, async (e, path: unknown) => {
+    if (typeof path !== 'string' || !allowedByWc.get(e.sender.id)?.has(path)) return false
+    const win = BrowserWindow.fromWebContents(e.sender) ?? BrowserWindow.getFocusedWindow()
+    const options = {
+      type: 'question' as const,
+      message: tm('flushMsg'),
+      detail: tDlg(getUiLang(), 'flushDetail', { name: basename(path) }),
+      buttons: [tm('btnSaveContinue'), tm('btnCancel')],
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true,
+    }
+    const { response } = win
+      ? await dialog.showMessageBox(win, options)
+      : await dialog.showMessageBox(options)
+    return response === 0
   })
 
   ipcMain.handle(PDF_CHANNELS.readFile, async (e, path: unknown) => {

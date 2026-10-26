@@ -5335,13 +5335,21 @@ export default function App() {
     stamp: t('commentKindStamp'),
   }
 
-  /** Extract/insert work on the file on disk — flush unsaved changes first; undefined = the save failed */
+  /**
+   * Extract/insert/print work on the file on disk — flush unsaved changes first;
+   * undefined = the save failed or the user kept the file as it is. Until the
+   * first save, the flush asks first: like the autosave gate, a PDF opened only
+   * to read is never overwritten because a thumbnail got dragged before a Split.
+   */
   const flushThen = async <T,>(fn: () => Promise<T>): Promise<T | undefined> => {
     if (redactions.length > 0) {
       opFailed(t('redactStructureBlocked'))
       return undefined
     }
-    if (dirty && !(await save())) return undefined
+    if (dirty) {
+      if (!savedOnceRef.current && !(await window.pdfApi.confirmFlush(filePath))) return undefined
+      if (!(await save())) return undefined
+    }
     return fn()
   }
 
