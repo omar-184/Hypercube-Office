@@ -766,6 +766,7 @@ export function RibbonHomeTab({ rb }: { rb: RibbonTabCtx }) {
               className="rb-icon"
               disabled={!editing && !hasSelection}
               data-tip={t('ribbonStrikethrough')}
+              aria-label={t('ribbonStrikethrough')}
               onMouseDown={(e) => {
                 e.preventDefault()
                 if (editing) onFormat('strikeThrough')
@@ -782,6 +783,7 @@ export function RibbonHomeTab({ rb }: { rb: RibbonTabCtx }) {
                 className="rb-icon"
                 disabled={!editing && !hasSelection}
                 data-tip={t('ribbonFontColor')}
+                aria-label={t('ribbonFontColor')}
                 onMouseDown={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -1120,6 +1122,7 @@ export function RibbonHomeTab({ rb }: { rb: RibbonTabCtx }) {
                     <button
                       key={align}
                       className={`rb-icon ${curAlign === align ? 'active' : ''}`}
+                      aria-pressed={curAlign === align}
                       disabled={!editing && !hasSelection}
                       data-tip={label}
                       aria-label={label}
@@ -1141,6 +1144,7 @@ export function RibbonHomeTab({ rb }: { rb: RibbonTabCtx }) {
                     <button
                       key={rtl ? 'rtl' : 'ltr'}
                       className={`rb-icon ${curRtl === rtl ? 'active' : ''}`}
+                      aria-pressed={curRtl === rtl}
                       disabled={!editing && !hasSelection}
                       data-tip={label}
                       aria-label={label}
@@ -1235,6 +1239,7 @@ export function RibbonHomeTab({ rb }: { rb: RibbonTabCtx }) {
       <Group label={t('ribbonGroupPanes')}>
         <button
           className={`rb-big ${formatOpen ? 'active' : ''}`}
+          aria-pressed={!!formatOpen}
           disabled={!hasDoc}
           onClick={onToggleFormat}
           data-tip={t('ribbonFormatPaneTip')}

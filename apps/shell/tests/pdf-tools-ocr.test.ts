@@ -62,11 +62,12 @@ afterEach(() => rmSync(dir, { recursive: true, force: true }))
 function runOcr(ocr: OcrRecognizer | null) {
   const src = join(dir, 'scan.pdf')
   writeFileSync(src, scannedPdf())
+  // pages of the scan, as OCR reports them
   const progress: [number, number][] = []
   const res = runRequest(
     m,
     { tool: 'ocr', files: [{ path: src }], options: { pages: '' } },
-    (done, total) => progress.push([done, total]),
+    (p) => p.pagesTotal !== undefined && progress.push([p.pagesDone ?? 0, p.pagesTotal]),
     { ocr },
   )
   return { res, progress }

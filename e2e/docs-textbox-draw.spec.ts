@@ -43,7 +43,7 @@ test('draw text box inserts a box of the dragged size ready to type', async () =
     await expect(editor.locator('.rb-editing')).toHaveCount(MAC ? 0 : 1)
 
     const activeTab = editor.locator('.ribbon-tab.active')
-    // clicking the already selected tab collapses the ribbon (Word for Mac model)
+    // switch only when needed: clicking the selected tab is a no-op (it used to collapse the ribbon)
     const openTextBoxMenu = async () => {
       if ((await activeTab.textContent()) !== 'Insert')
         await editor.locator('.ribbon-tab', { hasText: 'Insert' }).click()

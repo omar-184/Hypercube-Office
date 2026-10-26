@@ -6755,19 +6755,31 @@ export function App() {
                   </button>
                 </div>
               )}
-              <button className="zoom-btn" onClick={() => setZoom((z) => stepDocsZoom(z, -1))}>
+              <button
+                className="zoom-btn"
+                data-tip={t('ribbonZoomOut')}
+                aria-label={t('ribbonZoomOut')}
+                onClick={() => setZoom((z) => stepDocsZoom(z, -1))}
+              >
                 −
               </button>
               <input
                 className="zoom-slider"
                 type="range"
+                aria-label={t('ribbonZoomDialog')}
+                aria-valuetext={`${Math.round(zoom)}%`}
                 min={DOCS_ZOOM_MIN}
                 max={DOCS_ZOOM_MAX}
                 step={10}
                 value={Math.round(zoom)}
                 onChange={(e) => setZoom(Number(e.target.value))}
               />
-              <button className="zoom-btn" onClick={() => setZoom((z) => stepDocsZoom(z, 1))}>
+              <button
+                className="zoom-btn"
+                data-tip={t('ribbonZoomIn')}
+                aria-label={t('ribbonZoomIn')}
+                onClick={() => setZoom((z) => stepDocsZoom(z, 1))}
+              >
                 +
               </button>
               <button

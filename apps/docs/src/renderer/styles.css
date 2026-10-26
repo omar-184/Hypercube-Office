@@ -57,9 +57,11 @@
   --docs-shadow-tooltip: 0 4px 6px rgb(0 0 0 / 10%);
   --docs-shadow-toast: 0 4px 16px rgb(0 0 0 / 18%);
 
-  /* brand-fixed chrome: identical in both themes */
+  /* ink on accent fills: white on the light theme's deep accent, dark on the
+   * dark theme's lighter one (white on it fell to 2.75:1) */
   --docs-on-accent: #fff;
   --docs-on-accent-dim: rgb(255 255 255 / 75%);
+  /* brand-fixed chrome: identical in both themes */
   --docs-comment-accent: #e8a33d;
   /* table move handle floats over the always-white page: fixed colors */
   --docs-table-handle-bg: #ffffff;
@@ -150,6 +152,8 @@
 [data-theme='dark'] {
   --word-blue: #4a9eff;
   --word-blue-dark: #3a8eef;
+  --docs-on-accent: #111111;
+  --docs-on-accent-dim: rgb(17 17 17 / 75%);
   --word-heading: #6cabf0;
   --accent-soft: #1e3a5f;
 
@@ -206,6 +210,8 @@
   :root:not([data-theme='light']):not([data-theme='dark']) {
     --word-blue: #4a9eff;
     --word-blue-dark: #3a8eef;
+    --docs-on-accent: #111111;
+    --docs-on-accent-dim: rgb(17 17 17 / 75%);
     --word-heading: #6cabf0;
     --accent-soft: #1e3a5f;
 
@@ -7292,11 +7298,6 @@ body.docs-crop-active
   transform: scale(0.98);
 }
 
-.modal-actions button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--docs-focus-ring);
-}
-
 .modal-actions button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -7764,11 +7765,6 @@ body.docs-crop-active
   color: var(--color-text-primary);
 }
 
-.pwd-eye:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--docs-focus-ring);
-}
-
 .pwd-eye:disabled {
   opacity: 0.4;
   cursor: default;
@@ -8212,7 +8208,13 @@ body.docs-crop-active
 }
 
 .autosave-toggle input {
-  display: none;
+  /* unseen but in the tab order; the label shows the focus (ui/a11y.css) */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .autosave-knob {

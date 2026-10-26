@@ -1,9 +1,9 @@
 {
   "name": "@genoffice/shell",
   "productName": "Hypercube Office",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "AGPL-3.0-only",
-  "homepage": "https://github.com/omar-184/Hyper-Files",
+  "homepage": "https://github.com/omar-184/Hypercube-Office",
   "private": true,
   "description": "Hypercube Office shell: one app hosting every editor behind a home/launcher window",
   "main": "out/main/index.js",

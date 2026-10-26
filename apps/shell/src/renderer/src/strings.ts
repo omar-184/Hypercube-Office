@@ -128,6 +128,14 @@ export const strings = {
     setSecAbout: '关于',
     setGithub: '开源项目',
     openOnGitHub: '在 GitHub 上打开',
+    setLicense: '许可证',
+    setLicenseDesc: '本软件为自由软件，依据 GNU Affero 通用公共许可证第 3 版发布，不提供任何担保。',
+    setViewLicense: '查看许可证',
+    setNotices: '第三方声明',
+    setNoticesDesc: '所用的其他开源项目组件及其许可证。',
+    setViewNotices: '查看声明',
+    close: '关闭',
+    setUpdatesAuto: '每天自动检查一次',
     setChange: '更改',
     setUpdates: '检查更新',
     setUpdatesDesc:
@@ -198,6 +206,7 @@ export const strings = {
     language: '语言',
     closeTab: '关闭标签',
     tabList: '全部标签',
+    openTabs: '打开的文档',
     appMenu: '菜单',
     newTab: '新建标签页',
     // First-run onboarding
@@ -327,6 +336,15 @@ export const strings = {
     setSecAbout: 'About',
     setGithub: 'Open Source',
     openOnGitHub: 'Open on GitHub',
+    setLicense: 'License',
+    setLicenseDesc:
+      'Free software under the GNU Affero General Public License, version 3, with ABSOLUTELY NO WARRANTY.',
+    setViewLicense: 'View license',
+    setNotices: 'Third-party notices',
+    setNoticesDesc: 'Components from other open-source projects and their licenses.',
+    setViewNotices: 'View notices',
+    close: 'Close',
+    setUpdatesAuto: 'Check automatically once a day',
     setChange: 'Change',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -402,6 +420,7 @@ export const strings = {
     language: 'Language',
     closeTab: 'Close tab',
     tabList: 'All tabs',
+    openTabs: 'Open documents',
     appMenu: 'Menu',
     newTab: 'New tab',
     // First-run onboarding
@@ -529,6 +548,15 @@ export const strings = {
     setSecAbout: 'Giới thiệu',
     setGithub: 'Mã nguồn mở',
     openOnGitHub: 'Mở trên GitHub',
+    setLicense: 'Giấy phép',
+    setLicenseDesc:
+      'Phần mềm tự do theo Giấy phép Công cộng GNU Affero, phiên bản 3, KHÔNG CÓ BẤT KỲ BẢO HÀNH NÀO.',
+    setViewLicense: 'Xem giấy phép',
+    setNotices: 'Thông báo bên thứ ba',
+    setNoticesDesc: 'Các thành phần từ dự án mã nguồn mở khác và giấy phép của chúng.',
+    setViewNotices: 'Xem thông báo',
+    close: 'Đóng',
+    setUpdatesAuto: 'Tự động kiểm tra mỗi ngày một lần',
     setChange: 'Thay đổi',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -604,6 +632,7 @@ export const strings = {
     language: 'Ngôn ngữ',
     closeTab: 'Đóng tab',
     tabList: 'Tất cả các tab',
+    openTabs: 'Tài liệu đang mở',
     appMenu: 'Menu',
     newTab: 'Tab mới',
     // First-run onboarding
@@ -740,6 +769,15 @@ export const strings = {
     setSecAbout: '情報',
     setGithub: 'オープンソース',
     openOnGitHub: 'GitHub で開く',
+    setLicense: 'ライセンス',
+    setLicenseDesc:
+      'GNU Affero 一般公衆利用許諾書 第 3 版に基づくフリーソフトウェアです。一切の保証はありません。',
+    setViewLicense: 'ライセンスを表示',
+    setNotices: 'サードパーティの表示',
+    setNoticesDesc: '使用している他のオープンソース プロジェクトのコンポーネントとそのライセンス。',
+    setViewNotices: '表示を開く',
+    close: '閉じる',
+    setUpdatesAuto: '1 日 1 回自動で確認',
     setChange: '変更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -817,6 +855,7 @@ export const strings = {
     language: '言語',
     closeTab: 'タブを閉じる',
     tabList: 'すべてのタブ',
+    openTabs: '開いているドキュメント',
     appMenu: 'メニュー',
     newTab: '新しいタブ',
     // First-run onboarding
@@ -950,6 +989,15 @@ export const strings = {
     setSecAbout: '정보',
     setGithub: '오픈 소스',
     openOnGitHub: 'GitHub에서 열기',
+    setLicense: '라이선스',
+    setLicenseDesc:
+      'GNU Affero 일반 공중 사용 허가서 버전 3에 따른 자유 소프트웨어이며, 어떠한 보증도 제공하지 않습니다.',
+    setViewLicense: '라이선스 보기',
+    setNotices: '타사 고지',
+    setNoticesDesc: '사용된 다른 오픈 소스 프로젝트의 구성 요소와 해당 라이선스입니다.',
+    setViewNotices: '고지 보기',
+    close: '닫기',
+    setUpdatesAuto: '하루에 한 번 자동으로 확인',
     setChange: '변경',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1027,6 +1075,7 @@ export const strings = {
     language: '언어',
     closeTab: '탭 닫기',
     tabList: '모든 탭',
+    openTabs: '열린 문서',
     appMenu: '메뉴',
     newTab: '새 탭',
     // First-run onboarding
@@ -1164,6 +1213,15 @@ export const strings = {
     setSecAbout: 'À propos',
     setGithub: 'Open source',
     openOnGitHub: 'Ouvrir sur GitHub',
+    setLicense: 'Licence',
+    setLicenseDesc:
+      'Logiciel libre sous licence GNU Affero General Public License, version 3, SANS AUCUNE GARANTIE.',
+    setViewLicense: 'Voir la licence',
+    setNotices: 'Mentions tierces',
+    setNoticesDesc: 'Composants d’autres projets open source et leurs licences.',
+    setViewNotices: 'Voir les mentions',
+    close: 'Fermer',
+    setUpdatesAuto: 'Vérifier automatiquement une fois par jour',
     setChange: 'Modifier',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1241,6 +1299,7 @@ export const strings = {
     language: 'Langue',
     closeTab: "Fermer l'onglet",
     tabList: 'Tous les onglets',
+    openTabs: 'Documents ouverts',
     appMenu: 'Menu',
     newTab: 'Nouvel onglet',
     // First-run onboarding
@@ -1381,6 +1440,15 @@ export const strings = {
     setSecAbout: 'Über',
     setGithub: 'Open Source',
     openOnGitHub: 'Auf GitHub öffnen',
+    setLicense: 'Lizenz',
+    setLicenseDesc:
+      'Freie Software unter der GNU Affero General Public License, Version 3, OHNE JEGLICHE GEWÄHRLEISTUNG.',
+    setViewLicense: 'Lizenz anzeigen',
+    setNotices: 'Hinweise zu Drittanbietern',
+    setNoticesDesc: 'Komponenten anderer Open-Source-Projekte und ihre Lizenzen.',
+    setViewNotices: 'Hinweise anzeigen',
+    close: 'Schließen',
+    setUpdatesAuto: 'Einmal täglich automatisch prüfen',
     setChange: 'Ändern',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1458,6 +1526,7 @@ export const strings = {
     language: 'Sprache',
     closeTab: 'Tab schließen',
     tabList: 'Alle Tabs',
+    openTabs: 'Geöffnete Dokumente',
     appMenu: 'Menü',
     newTab: 'Neuer Tab',
     // First-run onboarding
@@ -1596,6 +1665,15 @@ export const strings = {
     setSecAbout: 'Acerca de',
     setGithub: 'Código abierto',
     openOnGitHub: 'Abrir en GitHub',
+    setLicense: 'Licencia',
+    setLicenseDesc:
+      'Software libre bajo la GNU Affero General Public License, versión 3, SIN NINGUNA GARANTÍA.',
+    setViewLicense: 'Ver licencia',
+    setNotices: 'Avisos de terceros',
+    setNoticesDesc: 'Componentes de otros proyectos de código abierto y sus licencias.',
+    setViewNotices: 'Ver avisos',
+    close: 'Cerrar',
+    setUpdatesAuto: 'Comprobar automáticamente una vez al día',
     setChange: 'Cambiar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1673,6 +1751,7 @@ export const strings = {
     language: 'Idioma',
     closeTab: 'Cerrar pestaña',
     tabList: 'Todas las pestañas',
+    openTabs: 'Documentos abiertos',
     appMenu: 'Menú',
     newTab: 'Nueva pestaña',
     // First-run onboarding
@@ -1806,6 +1885,15 @@ export const strings = {
     setSecAbout: 'เกี่ยวกับ',
     setGithub: 'โอเพนซอร์ส',
     openOnGitHub: 'เปิดบน GitHub',
+    setLicense: 'สัญญาอนุญาต',
+    setLicenseDesc:
+      'ซอฟต์แวร์เสรีภายใต้สัญญาอนุญาต GNU Affero General Public License รุ่น 3 โดยไม่มีการรับประกันใดๆ',
+    setViewLicense: 'ดูสัญญาอนุญาต',
+    setNotices: 'ประกาศของบุคคลที่สาม',
+    setNoticesDesc: 'ส่วนประกอบจากโครงการโอเพนซอร์สอื่นและสัญญาอนุญาต',
+    setViewNotices: 'ดูประกาศ',
+    close: 'ปิด',
+    setUpdatesAuto: 'ตรวจสอบอัตโนมัติวันละครั้ง',
     setChange: 'เปลี่ยน',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -1883,6 +1971,7 @@ export const strings = {
     language: 'ภาษา',
     closeTab: 'ปิดแท็บ',
     tabList: 'แท็บทั้งหมด',
+    openTabs: 'เอกสารที่เปิดอยู่',
     appMenu: 'เมนู',
     newTab: 'แท็บใหม่',
     // First-run onboarding
@@ -2020,6 +2109,15 @@ export const strings = {
     setSecAbout: 'Tentang',
     setGithub: 'Sumber Terbuka',
     openOnGitHub: 'Buka di GitHub',
+    setLicense: 'Lisensi',
+    setLicenseDesc:
+      'Perangkat lunak bebas di bawah GNU Affero General Public License versi 3, TANPA JAMINAN APA PUN.',
+    setViewLicense: 'Lihat lisensi',
+    setNotices: 'Pemberitahuan pihak ketiga',
+    setNoticesDesc: 'Komponen dari proyek sumber terbuka lain beserta lisensinya.',
+    setViewNotices: 'Lihat pemberitahuan',
+    close: 'Tutup',
+    setUpdatesAuto: 'Periksa otomatis sekali sehari',
     setChange: 'Ubah',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2097,6 +2195,7 @@ export const strings = {
     language: 'Bahasa',
     closeTab: 'Tutup tab',
     tabList: 'Semua tab',
+    openTabs: 'Dokumen terbuka',
     appMenu: 'Menu',
     newTab: 'Tab baru',
     // First-run onboarding
@@ -2233,6 +2332,15 @@ export const strings = {
     setSecAbout: 'О программе',
     setGithub: 'Открытый код',
     openOnGitHub: 'Открыть на GitHub',
+    setLicense: 'Лицензия',
+    setLicenseDesc:
+      'Свободное ПО под лицензией GNU Affero General Public License версии 3, БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ.',
+    setViewLicense: 'Открыть лицензию',
+    setNotices: 'Сторонние компоненты',
+    setNoticesDesc: 'Компоненты других проектов с открытым исходным кодом и их лицензии.',
+    setViewNotices: 'Открыть список',
+    close: 'Закрыть',
+    setUpdatesAuto: 'Проверять автоматически раз в день',
     setChange: 'Изменить',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2310,6 +2418,7 @@ export const strings = {
     language: 'Язык',
     closeTab: 'Закрыть вкладку',
     tabList: 'Все вкладки',
+    openTabs: 'Открытые документы',
     appMenu: 'Меню',
     newTab: 'Новая вкладка',
     // First-run onboarding
@@ -2444,6 +2553,15 @@ export const strings = {
     setSecAbout: 'حول',
     setGithub: 'مفتوح المصدر',
     openOnGitHub: 'فتح على GitHub',
+    setLicense: 'الترخيص',
+    setLicenseDesc:
+      'برنامج حر مرخّص بموجب رخصة جنو أفيرو العمومية العامة، الإصدار 3، دون أي ضمان على الإطلاق.',
+    setViewLicense: 'عرض الترخيص',
+    setNotices: 'إشعارات الجهات الخارجية',
+    setNoticesDesc: 'مكوّنات من مشاريع مفتوحة المصدر أخرى وتراخيصها.',
+    setViewNotices: 'عرض الإشعارات',
+    close: 'إغلاق',
+    setUpdatesAuto: 'التحقق تلقائيًا مرة واحدة يوميًا',
     setChange: 'تغيير',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2518,6 +2636,7 @@ export const strings = {
     language: 'اللغة',
     closeTab: 'إغلاق علامة التبويب',
     tabList: 'كل علامات التبويب',
+    openTabs: 'المستندات المفتوحة',
     appMenu: 'القائمة',
     newTab: 'علامة تبويب جديدة',
     // First-run onboarding
@@ -2648,6 +2767,15 @@ export const strings = {
     setSecAbout: 'Sobre',
     setGithub: 'Código aberto',
     openOnGitHub: 'Abrir no GitHub',
+    setLicense: 'Licença',
+    setLicenseDesc:
+      'Software livre sob a GNU Affero General Public License, versão 3, SEM QUALQUER GARANTIA.',
+    setViewLicense: 'Ver licença',
+    setNotices: 'Avisos de terceiros',
+    setNoticesDesc: 'Componentes de outros projetos de código aberto e suas licenças.',
+    setViewNotices: 'Ver avisos',
+    close: 'Fechar',
+    setUpdatesAuto: 'Verificar automaticamente uma vez por dia',
     setChange: 'Alterar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2723,6 +2851,7 @@ export const strings = {
     language: 'Idioma',
     closeTab: 'Fechar guia',
     tabList: 'Todas as guias',
+    openTabs: 'Documentos abertos',
     appMenu: 'Menu',
     newTab: 'Nova guia',
     // First-run onboarding
@@ -2852,6 +2981,15 @@ export const strings = {
     setSecAbout: 'Informazioni',
     setGithub: 'Open source',
     openOnGitHub: 'Apri su GitHub',
+    setLicense: 'Licenza',
+    setLicenseDesc:
+      'Software libero distribuito con la GNU Affero General Public License, versione 3, SENZA ALCUNA GARANZIA.',
+    setViewLicense: 'Visualizza licenza',
+    setNotices: 'Note di terze parti',
+    setNoticesDesc: 'Componenti di altri progetti open source e relative licenze.',
+    setViewNotices: 'Visualizza note',
+    close: 'Chiudi',
+    setUpdatesAuto: 'Controlla automaticamente una volta al giorno',
     setChange: 'Cambia',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -2927,6 +3065,7 @@ export const strings = {
     language: 'Lingua',
     closeTab: 'Chiudi scheda',
     tabList: 'Tutte le schede',
+    openTabs: 'Documenti aperti',
     appMenu: 'Menu',
     newTab: 'Nuova scheda',
     // First-run onboarding
@@ -3057,6 +3196,15 @@ export const strings = {
     setSecAbout: 'O aplikacji',
     setGithub: 'Open source',
     openOnGitHub: 'Otwórz w GitHub',
+    setLicense: 'Licencja',
+    setLicenseDesc:
+      'Wolne oprogramowanie na licencji GNU Affero General Public License w wersji 3, BEZ JAKIEJKOLWIEK GWARANCJI.',
+    setViewLicense: 'Pokaż licencję',
+    setNotices: 'Komponenty innych firm',
+    setNoticesDesc: 'Komponenty z innych projektów open source i ich licencje.',
+    setViewNotices: 'Pokaż listę',
+    close: 'Zamknij',
+    setUpdatesAuto: 'Sprawdzaj automatycznie raz dziennie',
     setChange: 'Zmień',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3132,6 +3280,7 @@ export const strings = {
     language: 'Język',
     closeTab: 'Zamknij kartę',
     tabList: 'Wszystkie karty',
+    openTabs: 'Otwarte dokumenty',
     appMenu: 'Menu',
     newTab: 'Nowa karta',
     // First-run onboarding
@@ -3249,6 +3398,15 @@ export const strings = {
     setSecAbout: 'O aplikaci',
     setGithub: 'Open source',
     openOnGitHub: 'Otevřít na GitHubu',
+    setLicense: 'Licence',
+    setLicenseDesc:
+      'Svobodný software pod licencí GNU Affero General Public License verze 3, BEZ JAKÉKOLI ZÁRUKY.',
+    setViewLicense: 'Zobrazit licenci',
+    setNotices: 'Oznámení třetích stran',
+    setNoticesDesc: 'Součásti z jiných open-source projektů a jejich licence.',
+    setViewNotices: 'Zobrazit oznámení',
+    close: 'Zavřít',
+    setUpdatesAuto: 'Kontrolovat automaticky jednou denně',
     setChange: 'Změnit',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3324,6 +3482,7 @@ export const strings = {
     language: 'Jazyk',
     closeTab: 'Zavřít kartu',
     tabList: 'Všechny karty',
+    openTabs: 'Otevřené dokumenty',
     appMenu: 'Nabídka',
     newTab: 'Nová karta',
     // First-run onboarding
@@ -3463,6 +3622,15 @@ export const strings = {
     setSecAbout: 'Over',
     setGithub: 'Open source',
     openOnGitHub: 'Openen op GitHub',
+    setLicense: 'Licentie',
+    setLicenseDesc:
+      'Vrije software onder de GNU Affero General Public License, versie 3, ZONDER ENIGE GARANTIE.',
+    setViewLicense: 'Licentie bekijken',
+    setNotices: 'Kennisgevingen van derden',
+    setNoticesDesc: 'Onderdelen uit andere opensourceprojecten en hun licenties.',
+    setViewNotices: 'Kennisgevingen bekijken',
+    close: 'Sluiten',
+    setUpdatesAuto: 'Eenmaal per dag automatisch controleren',
     setChange: 'Wijzigen',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3538,6 +3706,7 @@ export const strings = {
     language: 'Taal',
     closeTab: 'Tabblad sluiten',
     tabList: 'Alle tabbladen',
+    openTabs: 'Geopende documenten',
     appMenu: 'Menu',
     newTab: 'Nieuw tabblad',
     // First-run onboarding
@@ -3667,6 +3836,15 @@ export const strings = {
     setSecAbout: 'Perihal',
     setGithub: 'Sumber Terbuka',
     openOnGitHub: 'Buka di GitHub',
+    setLicense: 'Lesen',
+    setLicenseDesc:
+      'Perisian bebas di bawah GNU Affero General Public License versi 3, TANPA SEBARANG JAMINAN.',
+    setViewLicense: 'Lihat lesen',
+    setNotices: 'Notis pihak ketiga',
+    setNoticesDesc: 'Komponen daripada projek sumber terbuka lain dan lesennya.',
+    setViewNotices: 'Lihat notis',
+    close: 'Tutup',
+    setUpdatesAuto: 'Semak secara automatik sekali sehari',
     setChange: 'Tukar',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3742,6 +3920,7 @@ export const strings = {
     language: 'Bahasa',
     closeTab: 'Tutup tab',
     tabList: 'Semua tab',
+    openTabs: 'Dokumen terbuka',
     appMenu: 'Menu',
     newTab: 'Tab baharu',
     // First-run onboarding
@@ -3868,6 +4047,15 @@ export const strings = {
     setSecAbout: 'אודות',
     setGithub: 'קוד פתוח',
     openOnGitHub: 'פתח ב-GitHub',
+    setLicense: 'רישיון',
+    setLicenseDesc:
+      'תוכנה חופשית ברישיון GNU Affero General Public License, גרסה 3, ללא כל אחריות.',
+    setViewLicense: 'הצגת הרישיון',
+    setNotices: 'הודעות צד שלישי',
+    setNoticesDesc: 'רכיבים מפרויקטים אחרים בקוד פתוח והרישיונות שלהם.',
+    setViewNotices: 'הצגת ההודעות',
+    close: 'סגירה',
+    setUpdatesAuto: 'בדיקה אוטומטית פעם ביום',
     setChange: 'שינוי',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -3943,6 +4131,7 @@ export const strings = {
     language: 'שפה',
     closeTab: 'סגירת כרטיסייה',
     tabList: 'כל הכרטיסיות',
+    openTabs: 'מסמכים פתוחים',
     appMenu: 'תפריט',
     newTab: 'כרטיסייה חדשה',
     // First-run onboarding
@@ -4073,6 +4262,15 @@ export const strings = {
     setSecAbout: 'जानकारी',
     setGithub: 'ओपन सोर्स',
     openOnGitHub: 'GitHub पर खोलें',
+    setLicense: 'लाइसेंस',
+    setLicenseDesc:
+      'GNU Affero जनरल पब्लिक लाइसेंस, संस्करण 3 के तहत मुक्त सॉफ़्टवेयर, बिना किसी वारंटी के।',
+    setViewLicense: 'लाइसेंस देखें',
+    setNotices: 'तृतीय-पक्ष सूचनाएँ',
+    setNoticesDesc: 'अन्य ओपन-सोर्स परियोजनाओं के घटक और उनके लाइसेंस।',
+    setViewNotices: 'सूचनाएँ देखें',
+    close: 'बंद करें',
+    setUpdatesAuto: 'दिन में एक बार अपने-आप जाँचें',
     setChange: 'बदलें',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4148,6 +4346,7 @@ export const strings = {
     language: 'भाषा',
     closeTab: 'टैब बंद करें',
     tabList: 'सभी टैब',
+    openTabs: 'खुले दस्तावेज़',
     appMenu: 'मेनू',
     newTab: 'नया टैब',
     // First-run onboarding
@@ -4274,6 +4473,14 @@ export const strings = {
     setSecAbout: '關於',
     setGithub: '開源專案',
     openOnGitHub: '在 GitHub 上開啟',
+    setLicense: '授權條款',
+    setLicenseDesc: '本軟體為自由軟體，依 GNU Affero 通用公共授權條款第 3 版發布，不提供任何擔保。',
+    setViewLicense: '檢視授權條款',
+    setNotices: '第三方聲明',
+    setNoticesDesc: '所使用的其他開放原始碼專案元件及其授權條款。',
+    setViewNotices: '檢視聲明',
+    close: '關閉',
+    setUpdatesAuto: '每天自動檢查一次',
     setChange: '變更',
     setUpdates: 'Check for updates',
     setUpdatesDesc:
@@ -4349,6 +4556,7 @@ export const strings = {
     language: '語言',
     closeTab: '關閉分頁',
     tabList: '全部分頁',
+    openTabs: '開啟的文件',
     appMenu: '選單',
     newTab: '新分頁',
     // First-run onboarding

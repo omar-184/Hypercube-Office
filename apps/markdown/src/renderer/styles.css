@@ -15,7 +15,6 @@
   --md-focus: var(--accent);
   --md-node-outline: color-mix(in srgb, var(--accent) 60%, transparent);
   --md-focus-ring: rgb(35 36 37 / 20%);
-  --md-focus-ring-blue: rgb(74 141 246 / 30%);
   --md-error: #c62828;
   --md-error-border: rgb(198 40 40 / 45%);
   --md-error-bg: rgb(198 40 40 / 8%);
@@ -49,7 +48,6 @@
   --md-focus: var(--accent);
   --md-node-outline: color-mix(in srgb, var(--accent) 70%, transparent);
   --md-focus-ring: rgb(228 228 228 / 25%);
-  --md-focus-ring-blue: rgb(74 158 255 / 40%);
   --md-error: #f28b82;
   --md-error-border: rgb(242 139 130 / 45%);
   --md-error-bg: rgb(242 139 130 / 12%);
@@ -79,7 +77,6 @@
     --md-focus: var(--accent);
     --md-node-outline: color-mix(in srgb, var(--accent) 70%, transparent);
     --md-focus-ring: rgb(228 228 228 / 25%);
-    --md-focus-ring-blue: rgb(74 158 255 / 40%);
     --md-error: #f28b82;
     --md-error-border: rgb(242 139 130 / 45%);
     --md-error-bg: rgb(242 139 130 / 12%);
@@ -467,7 +464,13 @@ html.genoffice-popover-open .ribbon-tabs {
 }
 
 .autosave-toggle input {
-  display: none;
+  /* unseen but in the tab order; the label shows the focus (ui/a11y.css) */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .autosave-knob {
@@ -1152,7 +1155,6 @@ html.genoffice-popover-open .ribbon-tabs {
   font-size: 11.5px;
   padding: 0 8px;
   cursor: pointer;
-  outline: none;
 }
 
 .md-codeblock-copy:hover {
@@ -1184,11 +1186,6 @@ html.genoffice-popover-open .ribbon-tabs {
 
 .md-diagram:not(.md-diagram-collapsed) .md-diagram-preview {
   margin-top: 8px;
-}
-
-.md-diagram-preview:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--md-focus-ring-blue);
 }
 
 .md-diagram-preview svg {

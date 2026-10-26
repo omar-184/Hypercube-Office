@@ -67,6 +67,12 @@
 :root {
   --accent: #c43e1c;
   --accent-dark: #a33517;
+  /* ink on accent fills: white on the light theme's deep accent, dark on the
+   * dark theme's lighter one (white on it fell to 3.3:1) */
+  --slides-on-accent: #fff;
+  --slides-on-accent-border: rgb(255 255 255 / 60%);
+  --slides-on-accent-bg: rgb(255 255 255 / 12%);
+  --slides-on-accent-hover: rgb(255 255 255 / 25%);
   --accent-soft: #fbeae5;
 
   /* slides-local chrome shades */
@@ -90,7 +96,6 @@
   --slides-error-bg: #fdecec;
   --slides-danger-bg: #fbe9e7;
   --slides-ai-error: #c62828;
-  --slides-focus-ring: rgb(35 36 37 / 20%);
   --slides-scroll-thumb: rgb(0 0 0 / 25%);
   --slides-swatch-ring: rgb(0 0 0 / 15%);
   --slides-swatch-ring-strong: rgb(0 0 0 / 25%);
@@ -105,10 +110,6 @@
    * placeholders are paper; grid/guide/crop/laser overlays draw on the slide
    * itself — none of these follow the theme */
   --slides-paper: #fff;
-  --slides-on-accent: #fff;
-  --slides-on-accent-border: rgb(255 255 255 / 60%);
-  --slides-on-accent-bg: rgb(255 255 255 / 12%);
-  --slides-on-accent-hover: rgb(255 255 255 / 25%);
   --slides-knob-dot: #fff;
   --slides-badge-ink: #fff;
   --slides-badge-bg: rgb(0 0 0 / 45%);
@@ -180,6 +181,10 @@
 [data-theme='dark'] {
   --accent: #e8663f;
   --accent-dark: #d4552f;
+  --slides-on-accent: #111111;
+  --slides-on-accent-border: rgb(17 17 17 / 55%);
+  --slides-on-accent-bg: rgb(17 17 17 / 10%);
+  --slides-on-accent-hover: rgb(17 17 17 / 18%);
   --accent-soft: #43261d;
   --slides-statusbar-bg: #252525;
   --slides-rail-bg: #252525;
@@ -200,7 +205,6 @@
   --slides-error-bg: rgb(229 115 115 / 12%);
   --slides-danger-bg: #3a2020;
   --slides-ai-error: #f28b82;
-  --slides-focus-ring: rgb(228 228 228 / 25%);
   --slides-scroll-thumb: rgb(255 255 255 / 28%);
   --slides-swatch-ring: rgb(255 255 255 / 25%);
   --slides-swatch-ring-strong: rgb(255 255 255 / 35%);
@@ -215,6 +219,10 @@
   :root:not([data-theme='light']):not([data-theme='dark']) {
     --accent: #e8663f;
     --accent-dark: #d4552f;
+    --slides-on-accent: #111111;
+    --slides-on-accent-border: rgb(17 17 17 / 55%);
+    --slides-on-accent-bg: rgb(17 17 17 / 10%);
+    --slides-on-accent-hover: rgb(17 17 17 / 18%);
     --accent-soft: #43261d;
     --slides-statusbar-bg: #252525;
     --slides-rail-bg: #252525;
@@ -235,7 +243,6 @@
     --slides-error-bg: rgb(229 115 115 / 12%);
     --slides-danger-bg: #3a2020;
     --slides-ai-error: #f28b82;
-    --slides-focus-ring: rgb(228 228 228 / 25%);
     --slides-scroll-thumb: rgb(255 255 255 / 28%);
     --slides-swatch-ring: rgb(255 255 255 / 25%);
     --slides-swatch-ring-strong: rgb(255 255 255 / 35%);
@@ -320,7 +327,13 @@ button {
 }
 
 .autosave-toggle input {
-  display: none;
+  /* unseen but in the tab order; the label shows the focus (ui/a11y.css) */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .autosave-knob {
@@ -1512,11 +1525,6 @@ body.vib .slide-list {
   transform: scale(0.98);
 }
 
-.modal-actions button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--slides-focus-ring);
-}
-
 .modal-actions button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -2095,7 +2103,6 @@ body.vib .slide-list {
 
 .fp-shadowgal-btn:focus-visible {
   border-color: var(--accent);
-  outline: none;
 }
 
 /* fixed + anchored (same technique as gs-dd-pop) so pane scroll overflow never clips it;

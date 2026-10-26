@@ -43,6 +43,7 @@ import {
   type ToolError,
   type ToolFile,
   type ToolOutputFile,
+  type ToolProgress,
   type ToolRequest,
   type ToolResult,
   type ToolResultItem,
@@ -118,9 +119,40 @@ function writeOutputs(
   return written
 }
 
-/** What a run needs besides MuPDF: the system OCR engine, when this computer has one. */
+/** How the worker lets the user stop a run; without it a run goes to the end. */
+export interface JobControl {
+  canceled(): boolean
+  /** About to write outputs: false when the run was canceled instead. */
+  beginWrite(): boolean
+  endWrite(): void
+}
+
+/** What a run needs besides MuPDF. */
 export interface JobDeps {
+  /** the system OCR engine, when this computer has one */
   ocr?: OcrRecognizer | null
+  control?: JobControl
+  /** each input's result as soon as it is done, before the run ends */
+  onItem?: (item: ToolResultItem) => void
+}
+
+/** Unwinds a run the user stopped; never reported as an error. */
+class Canceled extends Error {}
+
+/**
+ * Write and report unless the run was stopped; false when it was. The runner
+ * never stops the thread inside this window, so no file is cut in half and
+ * every file written is reported.
+ */
+function guardedWrite(deps: JobDeps, write: () => void): boolean {
+  const c = deps.control
+  if (c && !c.beginWrite()) return false
+  try {
+    write()
+  } finally {
+    c?.endWrite()
+  }
+  return true
 }
 
 function runOne(
@@ -198,13 +230,22 @@ const GROUP_SUFFIX: Partial<Record<ToolRequest['tool'], string>> = {
 export function runRequest(
   m: Mupdf,
   req: ToolRequest,
-  onProgress: (done: number, total: number) => void = () => {},
+  onProgress: (progress: ToolProgress) => void = () => {},
   deps: JobDeps = {},
 ): ToolResult {
   if (req.files.length === 0) {
     return { ok: false, error: { code: 'bad-input', message: 'add at least one file' } }
   }
+  const total = req.files.length
   const outDir = (file: string) => req.outputDir ?? dirname(file)
+  const items: ToolResultItem[] = []
+  const finish = (item: ToolResultItem) => {
+    items.push(item)
+    deps.onItem?.(item)
+  }
+  const stopped = (): ToolResult => ({ ok: true, items, canceled: true })
+  // canceled while it waited behind another request
+  if (deps.control?.canceled()) return stopped()
 
   if (COMBINING_TOOLS.has(req.tool)) {
     const first = req.files[0].path
@@ -214,41 +255,48 @@ export function runRequest(
         req.tool === 'merge'
           ? mergePdfs(m, inputs)
           : imagesToPdf(m, inputs, (req as Extract<ToolRequest, { tool: 'images-to-pdf' }>).options)
-      onProgress(req.files.length, req.files.length)
-      return {
-        ok: true,
-        items: [{ source: first, outputs: writeOutputs(outDir(first), [out], out.name) }],
-      }
+      const write = () =>
+        finish({ source: first, outputs: writeOutputs(outDir(first), [out], out.name) })
+      if (!guardedWrite(deps, write)) return stopped()
+      onProgress({ done: total, total })
+      return { ok: true, items }
     } catch (err) {
       return { ok: false, error: toToolError(err, first) }
     }
   }
 
-  const items: ToolResultItem[] = []
-  req.files.forEach((file, i) => {
+  for (const [i, file] of req.files.entries()) {
+    if (deps.control?.canceled()) return stopped()
     try {
       const input = readInput(file)
-      // OCR reports pages, since one scanned file can take minutes
-      const outputs = runOne(m, req, input, deps, req.tool === 'ocr' ? onProgress : () => {})
+      // OCR reports pages too, since one scanned file can take minutes
+      const onPage = (pagesDone: number, pagesTotal: number) => {
+        if (deps.control?.canceled()) throw new Canceled()
+        onProgress({ done: i, total, pagesDone, pagesTotal })
+      }
+      const outputs = runOne(m, req, input, deps, onPage)
       if (outputs.length === 0) {
-        items.push({
+        finish({
           source: file.path,
           outputs: [],
           error: { code: 'bad-input', message: 'nothing to save', file: file.path },
         })
       } else {
         const group = `${stem(input.name)}-${GROUP_SUFFIX[req.tool] ?? 'output'}`
-        items.push({
-          source: file.path,
-          outputs: writeOutputs(outDir(file.path), outputs, group),
-          ...(req.tool === 'compress' ? { originalSize: input.bytes.length } : {}),
-        })
+        const write = () =>
+          finish({
+            source: file.path,
+            outputs: writeOutputs(outDir(file.path), outputs, group),
+            ...(req.tool === 'compress' ? { originalSize: input.bytes.length } : {}),
+          })
+        if (!guardedWrite(deps, write)) return stopped()
       }
     } catch (err) {
-      items.push({ source: file.path, outputs: [], error: toToolError(err, file.path) })
+      if (err instanceof Canceled) return stopped()
+      finish({ source: file.path, outputs: [], error: toToolError(err, file.path) })
     }
-    if (req.tool !== 'ocr') onProgress(i + 1, req.files.length)
-  })
+    onProgress({ done: i + 1, total })
+  }
   return { ok: true, items }
 }
 

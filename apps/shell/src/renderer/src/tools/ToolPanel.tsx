@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react'
 import {
+  COMBINING_TOOLS,
   IMAGE_EXTENSIONS,
   type ToolError,
   type ToolFile,
@@ -50,6 +51,40 @@ export function errorText(t: ToolsT, err: ToolError): string {
   return t(ERROR_KEYS[err.code] ?? 'errFailed', { detail: err.message })
 }
 
+/** Where one input stands while a run is going, for runs that take the inputs one by one */
+type RunState = 'waiting' | 'working' | 'finished'
+
+const RUN_STATE_KEYS: Record<RunState, ToolStringKey> = {
+  waiting: 'fileWaiting',
+  working: 'working',
+  finished: 'fileFinished',
+}
+
+function progressLabel(t: ToolsT, p: ToolProgress | null): string {
+  const parts: string[] = []
+  if (p && p.total > 1) {
+    parts.push(t('progressFile', { n: Math.min(p.done + 1, p.total), total: p.total }))
+  }
+  if (p?.pagesTotal) {
+    const page = Math.min((p.pagesDone ?? 0) + 1, p.pagesTotal)
+    parts.push(t('progressPage', { n: page, total: p.pagesTotal }))
+  }
+  return parts.length > 0 ? parts.join(' · ') : t('working')
+}
+
+/** 0..1, or null when there is nothing to count (one file in one step) */
+function progressFraction(p: ToolProgress | null): number | null {
+  if (!p || (p.total <= 1 && !p.pagesTotal)) return null
+  const page = p.pagesTotal ? (p.pagesDone ?? 0) / p.pagesTotal : 0
+  return Math.min(1, (p.done + page) / p.total)
+}
+
+function formatElapsed(ms: number): string {
+  const s = Math.floor(ms / 1000)
+  const mmss = `${Math.floor(s / 60) % 60}:${String(s % 60).padStart(2, '0')}`
+  return s >= 3600 ? `${Math.floor(s / 3600)}:${mmss.padStart(5, '0')}` : mmss
+}
+
 /** Validation that stops Start, as a message; null when the request can run. */
 function blocker(
   tool: ToolId,
@@ -74,10 +109,13 @@ export function ToolPanel({
   tool,
   initialPaths,
   onBack,
+  onBusyChange,
 }: {
   tool: ToolId
   initialPaths: string[]
   onBack: () => void
+  /** must be stable: it is left out of effect dependencies */
+  onBusyChange?: (busy: boolean) => void
 }) {
   const { t } = useToolsI18n()
   const def = toolDef(tool)
@@ -92,10 +130,18 @@ export function ToolPanel({
   const [outputDir, setOutputDir] = useState<string | null>(null)
   const [phase, setPhase] = useState<'edit' | 'running' | 'done'>('edit')
   const [progress, setProgress] = useState<ToolProgress | null>(null)
+  const [canceling, setCanceling] = useState(false)
+  const [startedAt, setStartedAt] = useState(0)
+  const [now, setNow] = useState(0)
   const [result, setResult] = useState<ToolResult | null>(null)
   const [dragging, setDragging] = useState(false)
   const entriesRef = useRef(entries)
   entriesRef.current = entries
+  const cancelRef = useRef<HTMLButtonElement>(null)
+  const startRef = useRef<HTMLButtonElement>(null)
+  const addRef = useRef<HTMLButtonElement>(null)
+  /** where focus goes when the results give way to the form again */
+  const focusOnEdit = useRef<'start' | 'add' | null>(null)
 
   const update = (path: string, patch: Partial<Entry>) =>
     setEntries((list) => list.map((e) => (e.path === path ? { ...e, ...patch } : e)))
@@ -150,6 +196,28 @@ export function ToolPanel({
 
   useEffect(() => api.onProgress(setProgress), [api])
 
+  const busy = phase === 'running'
+  useEffect(() => {
+    onBusyChange?.(busy)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [busy])
+
+  // the Start button goes away while running: Cancel takes the focus
+  useEffect(() => {
+    if (phase === 'running') cancelRef.current?.focus()
+    if (phase === 'edit' && focusOnEdit.current) {
+      ;(focusOnEdit.current === 'start' ? startRef : addRef).current?.focus()
+      focusOnEdit.current = null
+    }
+  }, [phase])
+
+  useEffect(() => {
+    if (!busy) return
+    setNow(Date.now())
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [busy])
+
   // properties: one file pre-fills the form with what it already says
   const firstMeta = entries.length === 1 ? entries[0].metadata : undefined
   useEffect(() => {
@@ -177,22 +245,29 @@ export function ToolPanel({
     addPaths(paths)
   }
 
-  // keep file drags here: Home's drop-to-open overlay and bridge must not see them
+  // keep file drags here: Home's drop-to-open overlay and bridge must not see
+  // them. While a run is going the list is fixed, so a drop is refused.
   const dragProps = {
     onDragEnter: (e: DragEvent) => {
       e.preventDefault()
       e.stopPropagation()
-      setDragging(true)
+      if (busy) e.dataTransfer.dropEffect = 'none'
+      else setDragging(true)
     },
     onDragOver: (e: DragEvent) => {
       e.preventDefault()
       e.stopPropagation()
+      if (busy) e.dataTransfer.dropEffect = 'none'
     },
     onDragLeave: (e: DragEvent) => {
       e.stopPropagation()
       if (e.currentTarget === e.target) setDragging(false)
     },
-    onDrop,
+    onDrop: (e: DragEvent) => {
+      if (!busy) return onDrop(e)
+      e.preventDefault()
+      e.stopPropagation()
+    },
   }
 
   function move(index: number, by: number) {
@@ -216,19 +291,32 @@ export function ToolPanel({
       options,
       ...(outputDir ? { outputDir } : {}),
     } as ToolRequest
+    // inputs taken one by one are counted from the start; a merge is one step
+    setProgress(COMBINING_TOOLS.has(tool) ? null : { done: 0, total: files.length })
+    setCanceling(false)
+    setStartedAt(Date.now())
     setPhase('running')
-    setProgress(null)
     try {
       setResult(await api.run(request))
     } catch (err) {
       setResult({ ok: false, error: { code: 'failed', message: String(err) } })
     }
+    setCanceling(false)
     setPhase('done')
   }
 
+  function cancel() {
+    setCanceling(true)
+    void api.cancel()
+  }
+
   const block = blocker(tool, entries, options, repeat)
-  const busy = phase === 'running'
   const multiple = def.input === 'image' || tool === 'merge'
+  const fraction = busy ? progressFraction(progress) : null
+  const runState = (i: number): RunState | undefined => {
+    if (!busy || !progress || progress.total <= 1) return undefined
+    return i < progress.done ? 'finished' : i === progress.done ? 'working' : 'waiting'
+  }
 
   return (
     <div className="pt-panel">
@@ -251,12 +339,15 @@ export function ToolPanel({
       {phase === 'done' && result ? (
         <Results
           result={result}
+          total={entries.length}
           t={t}
           onAgain={() => {
+            focusOnEdit.current = 'start'
             setPhase('edit')
             setResult(null)
           }}
           onReset={() => {
+            focusOnEdit.current = 'add'
             setEntries([])
             setPhase('edit')
             setResult(null)
@@ -272,7 +363,7 @@ export function ToolPanel({
               <div className="pt-drop-empty">
                 <span>{t(def.input === 'image' ? 'dropImages' : 'dropPdfs')}</span>
                 <span className="pt-drop-or">{t('dropOr')}</span>
-                <button className="btn btn-primary" onClick={() => void pick()}>
+                <button ref={addRef} className="btn btn-primary" onClick={() => void pick()}>
                   {t(def.input === 'image' ? 'addImages' : 'addPdfs')}
                 </button>
               </div>
@@ -288,6 +379,7 @@ export function ToolPanel({
                       tool={tool}
                       reorderable={multiple}
                       disabled={busy}
+                      runState={runState(i)}
                       t={t}
                       onMove={move}
                       onRemove={() => setEntries((list) => list.filter((x) => x.path !== e.path))}
@@ -344,20 +436,52 @@ export function ToolPanel({
             </div>
           </section>
 
-          <div className="pt-run">
-            <button
-              className="btn btn-primary pt-start"
-              disabled={busy || block !== null}
-              onClick={() => void start()}
-            >
-              {busy
-                ? progress && progress.total > 1
-                  ? t('workingProgress', { done: progress.done, total: progress.total })
-                  : t('working')
-                : t('start')}
-            </button>
-            {!busy && block && entries.length > 0 && <span className="pt-block">{t(block)}</span>}
-          </div>
+          {busy ? (
+            <div className="pt-progress">
+              <div className="pt-progress-head">
+                <span className="pt-progress-label" id="pt-progress-label">
+                  {canceling ? t('canceling') : progressLabel(t, progress)}
+                </span>
+                <span className="pt-progress-time">
+                  {t('elapsed', { time: formatElapsed(Math.max(0, now - startedAt)) })}
+                </span>
+                {/* aria-disabled, not disabled: a disabled button would drop the focus */}
+                <button
+                  ref={cancelRef}
+                  className="btn btn-secondary pt-small-btn"
+                  aria-disabled={canceling}
+                  onClick={canceling ? undefined : cancel}
+                >
+                  {t('cancel')}
+                </button>
+              </div>
+              <div
+                className={`pt-bar${fraction === null ? ' indeterminate' : ''}`}
+                role="progressbar"
+                aria-labelledby="pt-progress-label"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={fraction === null ? undefined : Math.round(fraction * 100)}
+              >
+                <div
+                  className="pt-bar-fill"
+                  style={fraction === null ? undefined : { width: `${fraction * 100}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="pt-run">
+              <button
+                ref={startRef}
+                className="btn btn-primary pt-start"
+                disabled={block !== null}
+                onClick={() => void start()}
+              >
+                {t('start')}
+              </button>
+              {block && entries.length > 0 && <span className="pt-block">{t(block)}</span>}
+            </div>
+          )}
         </>
       )}
     </div>
@@ -371,6 +495,7 @@ function FileRow({
   tool,
   reorderable,
   disabled,
+  runState,
   t,
   onMove,
   onRemove,
@@ -384,6 +509,7 @@ function FileRow({
   tool: ToolId
   reorderable: boolean
   disabled: boolean
+  runState?: RunState
   t: ToolsT
   onMove: (index: number, by: number) => void
   onRemove: () => void
@@ -392,16 +518,18 @@ function FileRow({
   onPages: (v: string) => void
 }) {
   return (
-    <li className={`pt-file ${e.status}`}>
+    <li className={`pt-file ${e.status}${runState ? ` run-${runState}` : ''}`}>
       <div className="pt-file-main">
         {reorderable && <span className="pt-file-index">{index + 1}</span>}
         <span className="pt-file-name" title={e.path}>
           {baseName(e.path)}
         </span>
         <span className="pt-file-meta">
-          {e.status === 'checking' && t('checking')}
+          {runState && t(RUN_STATE_KEYS[runState])}
+          {!runState && e.status === 'checking' && t('checking')}
           {e.status === 'locked' && t('locked')}
-          {e.status === 'ready' &&
+          {!runState &&
+            e.status === 'ready' &&
             [
               e.pages !== undefined
                 ? e.pages === 1
@@ -488,24 +616,48 @@ function FileRow({
 
 function Results({
   result,
+  total,
   t,
   onAgain,
   onReset,
 }: {
   result: ToolResult
+  /** inputs in the request */
+  total: number
   t: ToolsT
   onAgain: () => void
   onReset: () => void
 }) {
   const home = window.hyperFiles
   const items = result.ok ? result.items : []
-  const failed = !result.ok || items.every((i) => i.error)
+  const canceled = result.ok && result.canceled === true
+  const failed = !canceled && (!result.ok || items.every((i) => i.error))
   const partial = !failed && items.some((i) => i.error)
+  // one file out: opening it is what comes next
+  const single = items.length === 1 && items[0].outputs.length === 1
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  // the form that had focus is gone; the outcome takes it, and a screen reader reads it
+  useEffect(() => titleRef.current?.focus(), [])
   return (
     <section className="pt-results">
-      <h2 className={`pt-results-title${failed ? ' failed' : ''}`}>
-        {failed ? t('doneFailed') : partial ? t('doneSome') : t('doneTitle')}
+      <h2
+        ref={titleRef}
+        tabIndex={-1}
+        className={`pt-results-title${failed ? ' failed' : canceled ? ' canceled' : ''}`}
+      >
+        {canceled
+          ? t('canceledTitle')
+          : failed
+            ? t('doneFailed')
+            : partial
+              ? t('doneSome')
+              : t('doneTitle')}
       </h2>
+      {canceled && (
+        <p className="pt-results-note">
+          {items.length > 0 ? t('canceledSome', { done: items.length, total }) : t('canceledNone')}
+        </p>
+      )}
       {!result.ok && <p className="pt-file-error">{errorText(t, result.error)}</p>}
       <ul className="pt-files">
         {items.map((item) => (
@@ -527,7 +679,7 @@ function Results({
               </span>
               {item.outputs.length === 1 && PDF_RE.test(item.outputs[0].path) && (
                 <button
-                  className="btn btn-secondary pt-small-btn"
+                  className={`btn ${single ? 'btn-primary' : 'btn-secondary'} pt-small-btn`}
                   onClick={() => void home.openPath(item.outputs[0].path)}
                 >
                   {t('open')}

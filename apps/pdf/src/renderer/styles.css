@@ -3,6 +3,9 @@
 :root {
   --accent: #c43e1c;
   --accent-dark: #a33517;
+  /* ink on accent fills: white on the light theme's deep accent, dark on the
+   * dark theme's lighter one (white on it fell to 3.3:1) */
+  --pdf-on-accent: #fff;
   --accent-soft: #fbeae5;
 
   /* pdf-local chrome shades */
@@ -11,7 +14,6 @@
   --pdf-ok: #217346;
   --pdf-thumb-border-hover: #a8a6a4;
   --pdf-prop-bg: rgb(0 0 0 / 3%);
-  --pdf-focus-ring: rgb(35 36 37 / 20%);
   --pdf-statusbar-bg: #f3f4f6;
   --pdf-statusbar-border: #e1e4e8;
   --pdf-statusbar-hover: rgb(0 0 0 / 8%);
@@ -21,7 +23,6 @@
   /* content-side constants: pages are paper, page overlays sit on paper —
    * these never follow the theme */
   --pdf-paper: #fff;
-  --pdf-on-accent: #fff;
   --pdf-select: #c43e1c;
   --pdf-select-glow: rgb(196 62 28 / 90%);
   --pdf-ink-highlight: #ffde59;
@@ -82,13 +83,13 @@
 [data-theme='dark'] {
   --accent: #e8663f;
   --accent-dark: #d4552f;
+  --pdf-on-accent: #111111;
   --accent-soft: #43261d;
   --pdf-error: #e57373;
   --pdf-error-bg-hover: rgb(229 115 115 / 12%);
   --pdf-ok: #58b380;
   --pdf-thumb-border-hover: #777;
   --pdf-prop-bg: rgb(255 255 255 / 5%);
-  --pdf-focus-ring: rgb(255 255 255 / 30%);
   --pdf-statusbar-bg: #252525;
   --pdf-statusbar-border: #3a3a3a;
   --pdf-statusbar-hover: rgb(255 255 255 / 10%);
@@ -104,13 +105,13 @@
   :root:not([data-theme='light']):not([data-theme='dark']) {
     --accent: #e8663f;
     --accent-dark: #d4552f;
+    --pdf-on-accent: #111111;
     --accent-soft: #43261d;
     --pdf-error: #e57373;
     --pdf-error-bg-hover: rgb(229 115 115 / 12%);
     --pdf-ok: #58b380;
     --pdf-thumb-border-hover: #777;
     --pdf-prop-bg: rgb(255 255 255 / 5%);
-    --pdf-focus-ring: rgb(255 255 255 / 30%);
     --pdf-statusbar-bg: #252525;
     --pdf-statusbar-border: #3a3a3a;
     --pdf-statusbar-hover: rgb(255 255 255 / 10%);
@@ -909,8 +910,6 @@ button {
   gap: 3px;
   padding-bottom: 10px;
   cursor: pointer;
-  /* focusable for arrow-key page stepping; the active red border is the visual cue */
-  outline: none;
 }
 
 .pdf-thumb-box {
@@ -1290,11 +1289,6 @@ button {
   color: var(--color-text-primary);
 }
 
-.pdf-pwd-eye:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--pdf-focus-ring);
-}
-
 .pdf-pwd-error {
   display: flex;
   align-items: center;
@@ -1456,11 +1450,6 @@ button {
 .pdf-modal-btn:active:not(:disabled) {
   filter: brightness(0.88);
   transform: scale(0.98);
-}
-
-.pdf-modal-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--pdf-focus-ring);
 }
 
 .pdf-modal-btn:disabled {

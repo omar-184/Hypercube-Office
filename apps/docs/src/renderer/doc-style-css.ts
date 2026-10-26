@@ -23,6 +23,7 @@ import {
   cssLeadTop,
   cssLineHeight,
   WORD_AUTO_SPACING_PT,
+  DEFAULT_FONT_FAMILY,
   isBundledFont,
   isCjkFontName,
   wordMetricAliasFace,
@@ -456,7 +457,7 @@ export function docStyleCss(parsed: ParsedDocFull): string {
     const baseFamily =
       baseAscii && baseEa && baseAscii !== baseEa
         ? cssDualFontFamily(baseAscii, baseEa)
-        : cssFontFamily(baseEa ?? baseAscii ?? 'Calibri')
+        : cssFontFamily(baseEa ?? baseAscii ?? DEFAULT_FONT_FAMILY)
     decls.push(`font-family:${baseFamily}`)
     if (baseEa) decls.push(`--doc-east-asian-font:${cssFontFamily(baseEa)}`)
     // Mixed declared/inherited-font paragraphs under a typed grid (blockAttrs

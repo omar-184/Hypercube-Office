@@ -172,6 +172,38 @@ body.vib .home {
   font-variant-numeric: tabular-nums;
 }
 
+/* PDF Tools: a run going on (spinner), or one that finished while another view showed (dot) */
+.nav-badge {
+  box-sizing: border-box;
+  margin-inline-start: auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.nav-badge.busy {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  background: none;
+  animation: load-more-spin 0.8s linear infinite;
+}
+
+/* read by screen readers only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---- bottom-left Settings entry ---- */
 /* clicking it opens the settings modal (settings.css): language / theme / save location */
 
@@ -833,12 +865,6 @@ body.vib .home {
   transform: scale(0.98);
 }
 
-.btn:focus-visible {
-  outline: none;
-  --home-shadow-3: 0 0 0 3px rgb(35 36 37 / 20%);
-  box-shadow: var(--home-shadow-3);
-}
-
 .btn-secondary {
   background: var(--surface);
   border: 1px solid var(--color-border-default);
@@ -1251,6 +1277,11 @@ body.vib .home {
   background: var(--accent-soft);
 }
 
+.picker-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
 .picker-row.disabled {
   color: var(--text-muted);
   cursor: default;
@@ -1595,7 +1626,10 @@ body.vib .home {
 .search-row:hover,
 .search-row:focus-visible {
   background: var(--hover);
-  outline: none;
+}
+
+.search-row:focus-visible {
+  outline-offset: -2px;
 }
 .search-row .recent-icon {
   margin-top: 1px;

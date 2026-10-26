@@ -35,7 +35,7 @@ test('bookmarks are added, renamed, nested, reordered and saved', async () => {
   try {
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'View', exact: true }).click()
+    await editor.getByRole('tab', { name: 'View', exact: true }).click()
     await editor.getByRole('button', { name: 'Outline', exact: true }).click()
 
     const add = editor.getByRole('button', { name: 'Add bookmark for the current page' })

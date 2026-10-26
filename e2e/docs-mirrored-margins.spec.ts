@@ -99,7 +99,7 @@ const leftRulerZone = (page: Page) =>
     .first()
     .evaluate((el) => parseFloat(el.style.width))
 
-/** Word for Mac model: clicking the active tab collapses the ribbon, so only switch when needed */
+/** switch only when needed: a click on the active tab is a no-op (it used to collapse the ribbon) */
 async function showTab(page: Page, name: RegExp) {
   const tab = page.locator('.ribbon-tab', { hasText: name })
   if (!/\bactive\b/.test((await tab.getAttribute('class')) ?? '')) await tab.click()

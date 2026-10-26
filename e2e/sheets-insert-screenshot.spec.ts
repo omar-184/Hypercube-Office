@@ -47,7 +47,7 @@ test.describe('sheets: Insert → Screenshot', () => {
         systemPreferences.getMediaAccessStatus = () => 'granted'
       })
 
-      await sheets.getByRole('button', { name: 'Insert', exact: true }).click()
+      await sheets.getByRole('tab', { name: 'Insert', exact: true }).click()
       await sheets.getByRole('button', { name: 'Screenshot' }).click()
       const dialog = sheets.getByRole('dialog', { name: 'Screenshot' })
       await expect(dialog).toBeVisible()

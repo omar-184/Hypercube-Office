@@ -210,7 +210,8 @@
   height: 18px;
   border-radius: 50%;
   background: var(--surface);
-  box-shadow: var(--shadow-modal-strong);
+  /* a knob-sized lift; the dialog's 20px drop shadow smudged the area below */
+  box-shadow: var(--shadow-pill);
   transition: left 0.15s ease;
 }
 

@@ -64,7 +64,7 @@ describe('pdf tools jobs', () => {
         files: [{ path: join(dir, 'book.pdf') }, { path: join(dir, 'notes.pdf') }],
         options: { kind: 'every', size: 1 },
       },
-      (done) => progress.push(done),
+      (p) => progress.push(p.done),
     )
     expect(progress).toEqual([1, 2])
     expect(res.ok).toBe(true)
@@ -134,6 +134,44 @@ describe('pdf tools jobs', () => {
     })
     writeFileSync(join(dir, 'photo.jpg'), 'x')
     expect(fileInfo(m, join(dir, 'photo.jpg'))).toMatchObject({ ok: true, kind: 'image' })
+  })
+
+  it('stops between files when canceled and reports the ones it finished', () => {
+    const files = ['a', 'b', 'c'].map((n) => {
+      writeFileSync(join(dir, `${n}.pdf`), makePdf(1))
+      return { path: join(dir, `${n}.pdf`) }
+    })
+    let stop = false
+    const streamed: string[] = []
+    const res = runRequest(
+      m,
+      { tool: 'rotate', files, options: { angle: 90, pages: '' } },
+      () => {},
+      {
+        // the cancel lands while the first file is being written
+        onItem: (item) => {
+          streamed.push(item.source)
+          stop = true
+        },
+        control: { canceled: () => stop, beginWrite: () => !stop, endWrite: () => {} },
+      },
+    )
+    expect(res).toMatchObject({ ok: true, canceled: true })
+    expect(res.ok && res.items.map((i) => i.source)).toEqual([files[0].path])
+    expect(streamed).toEqual([files[0].path])
+    expect(readdirSync(dir).filter((f) => !['a.pdf', 'b.pdf', 'c.pdf'].includes(f))).toHaveLength(1)
+  })
+
+  it('writes nothing once canceled, even when the work itself is done', () => {
+    writeFileSync(join(dir, 'x.pdf'), makePdf(1))
+    const res = runRequest(
+      m,
+      { tool: 'compress', files: [{ path: join(dir, 'x.pdf') }], options: { level: 'balanced' } },
+      () => {},
+      { control: { canceled: () => false, beginWrite: () => false, endWrite: () => {} } },
+    )
+    expect(res).toEqual({ ok: true, items: [], canceled: true })
+    expect(readdirSync(dir)).toEqual(['x.pdf'])
   })
 
   it('numbers clashing names', () => {

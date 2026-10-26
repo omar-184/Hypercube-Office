@@ -95,12 +95,12 @@ test.describe('docs header/footer rich editing', () => {
       const editor = header.locator('.page-hf-editor')
       await expect(editor).toBeVisible()
       // the contextual tab appears and the ribbon acts on the strip editor
-      const hfTab = page.getByRole('button', { name: 'Header & Footer', exact: true })
+      const hfTab = page.getByRole('tab', { name: 'Header & Footer', exact: true })
       await expect(hfTab).toBeVisible()
       await page.keyboard.press('End')
       await page.keyboard.type(' ')
       // Home-tab formatting acts on the strip editor; TipTap hands focus back a frame after the click
-      await page.getByRole('button', { name: 'Home', exact: true }).click()
+      await page.getByRole('tab', { name: 'Home', exact: true }).click()
       const boldButton = page.locator('.ribbon [data-tip^="Bold"]').first()
       await boldButton.click()
       await expect(editor).toBeFocused()

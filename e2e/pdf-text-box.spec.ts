@@ -28,7 +28,7 @@ test('a text-box comment is typed on the page, edited, saved and listed', async 
   try {
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await editor.getByRole('button', { name: 'Text box', exact: true }).click()
 
     const layer = editor.locator('.pdf-page .pdf-draw-layer').first()
@@ -55,7 +55,7 @@ test('a text-box comment is typed on the page, edited, saved and listed', async 
 
     // After the reload it is a saved annotation: listed with its text. Until the reload
     // finishes the list can briefly show the saved copy beside the pending "Unsaved" one.
-    await editor.getByRole('button', { name: 'View', exact: true }).click()
+    await editor.getByRole('tab', { name: 'View', exact: true }).click()
     await editor.getByRole('button', { name: 'Comments', exact: true }).click()
     await expect(editor.locator('.pdf-comment-unsaved')).toHaveCount(0)
     const row = editor.locator('.pdf-comment-row')
@@ -82,7 +82,7 @@ test('a text box added right after a save is written once, beside the saved one'
   try {
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     // The tool stays armed after each box
     await editor.getByRole('button', { name: 'Text box', exact: true }).click()
     const layer = editor.locator('.pdf-page .pdf-draw-layer').first()
@@ -105,7 +105,7 @@ test('a text box added right after a save is written once, beside the saved one'
     await addBox('Second note', 0.6)
     await editor.keyboard.press('ControlOrMeta+s')
     await expect.poll(() => freeTexts(source)).toContain('Second note')
-    await editor.getByRole('button', { name: 'View', exact: true }).click()
+    await editor.getByRole('tab', { name: 'View', exact: true }).click()
     await editor.getByRole('button', { name: 'Comments', exact: true }).click()
     await expect(editor.locator('.pdf-comment-unsaved')).toHaveCount(0)
     expect(await freeTexts(source)).toEqual(['First note', 'Second note'])

@@ -11,7 +11,7 @@ import {
   selectedFonts,
   selectedSizeMixed,
 } from '../editor/text-style-resolve'
-import { textHasCjk } from '../line-metrics'
+import { DEFAULT_FONT_FAMILY, textHasCjk } from '../line-metrics'
 import { cachedByDoc } from '../doc-cache'
 
 /**
@@ -274,6 +274,8 @@ export function computeFormatState(
   const textAttrs = ed.getAttributes('docTextStyle')
   const fonts = selectedFonts(ed, styles, docDefaults)
   // Word's font box names the slot matching the script at the caret; null = mixed
+  // (blank box). A document that declares no font at all renders in the page's
+  // fallback face, so the box names that instead of going blank.
   const displayFont = (): string => {
     const { from, to } = ed.state.selection
     const sample =
@@ -288,7 +290,8 @@ export function computeFormatState(
         ? fonts.fontLatin
         : fonts.fontEastAsia
       : fonts.fontLatin
-    return slot ?? ''
+    if (slot === null) return ''
+    return slot || DEFAULT_FONT_FAMILY
   }
   const paraAttrs = sub ? ed.getAttributes('docParagraph') : paraAttrsOf(editor)
   const mainPara = paraAttrsOf(editor)

@@ -165,7 +165,7 @@ describe('ribbon compact density', () => {
     expect(isCompact()).toBe(true)
   })
 
-  it('the active tab advertises both ways out while compact', () => {
+  it('the active tab names the compact shortcut', () => {
     const tip = $('home').dataset.tip
     expect(tip).toMatch(/Compact/)
     // the unselected tab stays quiet

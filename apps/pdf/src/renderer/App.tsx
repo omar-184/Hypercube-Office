@@ -137,7 +137,15 @@ import {
 } from './color-runs'
 import type { CharStyle } from './color-runs'
 import { platformShortcuts } from '@genoffice/i18n'
-import { Dropdown, useDismissablePopover, useRibbonCollapse } from '@genoffice/ui'
+import {
+  Dropdown,
+  RibbonCollapseButton,
+  ribbonPanelProps,
+  ribbonTabListProps,
+  ribbonTabProps,
+  useDismissablePopover,
+  useRibbonCollapse,
+} from '@genoffice/ui'
 import { useI18n } from './i18n/locale'
 import { useAutosave } from './useAutosave'
 import { containsAscii } from '../shared/ascii-search'
@@ -5330,13 +5338,21 @@ export default function App() {
     stamp: t('commentKindStamp'),
   }
 
-  /** Extract/insert work on the file on disk — flush unsaved changes first; undefined = the save failed */
+  /**
+   * Extract/insert/print work on the file on disk — flush unsaved changes first;
+   * undefined = the save failed or the user kept the file as it is. Until the
+   * first save, the flush asks first: like the autosave gate, a PDF opened only
+   * to read is never overwritten because a thumbnail got dragged before a Split.
+   */
   const flushThen = async <T,>(fn: () => Promise<T>): Promise<T | undefined> => {
     if (redactions.length > 0) {
       opFailed(t('redactStructureBlocked'))
       return undefined
     }
-    if (dirty && !(await save())) return undefined
+    if (dirty) {
+      if (!savedOnceRef.current && !(await window.pdfApi.confirmFlush(filePath))) return undefined
+      if (!(await save())) return undefined
+    }
     return fn()
   }
 
@@ -5797,6 +5813,10 @@ export default function App() {
           e.preventDefault()
           if (e.shiftKey) redo()
           else undo()
+        } else if (k === 'y' && !e.shiftKey) {
+          // Windows' Redo, alongside Ctrl+Shift+Z
+          e.preventDefault()
+          redo()
         } else if (k === 'f') {
           e.preventDefault()
           openSearch()
@@ -6045,6 +6065,7 @@ export default function App() {
           <div className="rb-row">
             <input
               className="tb-page-input"
+              aria-label={t('pageNumber')}
               value={pageInput}
               onChange={(e) => setPageInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && commitPageInput()}
@@ -6103,6 +6124,7 @@ export default function App() {
   const searchBtn = (
     <button
       className={`rb-big${searchOpen ? ' active' : ''}`}
+      aria-pressed={!!searchOpen}
       data-tip={`${t('search')} (${platformShortcuts('⌘F')})`}
       onClick={() => (searchOpen && !searchRedact ? closeSearch() : openSearch())}
     >
@@ -6130,6 +6152,7 @@ export default function App() {
   const editTextBtn = (
     <button
       className={`rb-big${editTextMode ? ' active' : ''}`}
+      aria-pressed={!!editTextMode}
       disabled={readOnly}
       data-tip={t('editTextHint')}
       onClick={() => {
@@ -6152,6 +6175,7 @@ export default function App() {
   const insertTextBtn = (
     <button
       className={`rb-big${pendingTextInsert ? ' active' : ''}`}
+      aria-pressed={!!pendingTextInsert}
       disabled={readOnly}
       data-tip={t('insertTextHint')}
       onClick={() => {
@@ -6215,6 +6239,7 @@ export default function App() {
   const commentsBtn = (
     <button
       className={`rb-big${sidebar === 'comments' ? ' active' : ''}`}
+      aria-pressed={sidebar === 'comments'}
       data-tip={t('commentsHint')}
       onClick={() => setSidebar((v) => (v === 'comments' ? null : 'comments'))}
     >
@@ -6230,6 +6255,7 @@ export default function App() {
       <div className="ribbon-group-items">
         <button
           className={`rb-big${sidebar === 'thumbs' ? ' active' : ''}`}
+          aria-pressed={sidebar === 'thumbs'}
           onClick={() => setSidebar((v) => (v === 'thumbs' ? null : 'thumbs'))}
         >
           <span className="rb-big-icon">
@@ -6239,6 +6265,7 @@ export default function App() {
         </button>
         <button
           className={`rb-big${sidebar === 'outline' ? ' active' : ''}`}
+          aria-pressed={sidebar === 'outline'}
           disabled={!outlineShown}
           onClick={() => setSidebar((v) => (v === 'outline' ? null : 'outline'))}
         >
@@ -6251,6 +6278,7 @@ export default function App() {
         {searchBtn}
         <button
           className={`rb-big${spread === 2 ? ' active' : ''}`}
+          aria-pressed={spread === 2}
           data-tip={spread === 2 ? t('singlePage') : t('twoPage')}
           onClick={() => setSpread((v) => (v === 1 ? 2 : 1))}
         >
@@ -6259,6 +6287,7 @@ export default function App() {
         </button>
         <button
           className={`rb-big${nightMode ? ' active' : ''}`}
+          aria-pressed={!!nightMode}
           data-tip={t('nightMode')}
           onClick={() => setNightMode((v) => !v)}
         >
@@ -6274,7 +6303,11 @@ export default function App() {
   return (
     <div className="app" inert={redactionCopyInFlight} aria-busy={redactionCopyInFlight}>
       <div className={`ribbon ${collapse.rootClass}`} ref={collapse.rootRef}>
-        <div className="ribbon-tabs" onDoubleClick={collapse.onTabsDoubleClick}>
+        <div
+          className="ribbon-tabs"
+          {...ribbonTabListProps(lang)}
+          onDoubleClick={collapse.onTabsDoubleClick}
+        >
           <button
             className="qa-btn"
             data-tip={`${t('save')} (${platformShortcuts('⌘S')})`}
@@ -6307,6 +6340,7 @@ export default function App() {
             <button
               key={id}
               className={`ribbon-tab ${collapse.tabClass(ribbonTab === id)}`}
+              {...ribbonTabProps(id, ribbonTab === id)}
               data-tip={collapse.tabTip(ribbonTab === id)}
               onClick={() => {
                 collapse.onTabPress(ribbonTab === id)
@@ -6319,6 +6353,7 @@ export default function App() {
           {!readOnly && (
             <button
               className={`ribbon-tab ribbon-tab-context ${collapse.tabClass(ribbonTab === 'fillForm')}`}
+              {...ribbonTabProps('fillForm', ribbonTab === 'fillForm')}
               data-tip={collapse.tabTip(ribbonTab === 'fillForm')}
               onClick={() => {
                 collapse.onTabPress(ribbonTab === 'fillForm')
@@ -6331,6 +6366,7 @@ export default function App() {
           {!readOnly && (
             <button
               className={`ribbon-tab ribbon-tab-context ${collapse.tabClass(ribbonTab === 'prepareForm')}`}
+              {...ribbonTabProps('prepareForm', ribbonTab === 'prepareForm')}
               data-tip={collapse.tabTip(ribbonTab === 'prepareForm') ?? t('prepareFormHint')}
               onClick={() => {
                 collapse.onTabPress(ribbonTab === 'prepareForm')
@@ -6361,7 +6397,7 @@ export default function App() {
             </span>
           )}
         </div>
-        <div className="ribbon-body" data-ribbon-body="">
+        <div className="ribbon-body" data-ribbon-body="" {...ribbonPanelProps(ribbonTab)}>
           {ribbonTab === 'home' && (
             <>
               {markupGroup}
@@ -6454,6 +6490,7 @@ export default function App() {
                     <button
                       key={tool}
                       className={`rb-big${drawTool === tool ? ' active' : ''}`}
+                      aria-pressed={drawTool === tool}
                       disabled={readOnly}
                       data-tip={t(key)}
                       onClick={() => {
@@ -6496,6 +6533,7 @@ export default function App() {
                   )}
                   <button
                     className={`rb-big${drawTool === 'redact' ? ' active' : ''}`}
+                    aria-pressed={drawTool === 'redact'}
                     disabled={readOnly}
                     data-tip={t('redactHint')}
                     onClick={() => {
@@ -6512,6 +6550,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${searchOpen && searchRedact ? ' active' : ''}`}
+                    aria-pressed={!!(searchOpen && searchRedact)}
                     disabled={readOnly}
                     data-tip={t('redactFindHint')}
                     onClick={() => (searchOpen && searchRedact ? closeSearch() : openSearch(true))}
@@ -6541,6 +6580,7 @@ export default function App() {
                   )}
                   <button
                     className={`rb-big${pendingSign ? ' active' : ''}`}
+                    aria-pressed={!!pendingSign}
                     disabled={readOnly}
                     data-tip={t('signTitle')}
                     onClick={() => {
@@ -6593,6 +6633,7 @@ export default function App() {
                   {insertTextBtn}
                   <button
                     className={`rb-big${imagePick && !pendingStaticFill ? ' active' : ''}`}
+                    aria-pressed={!!(imagePick && !pendingStaticFill)}
                     disabled={readOnly}
                     data-tip={t('insertImageHint')}
                     onClick={() => (imagePick ? setImagePick(null) : pickInsertImage())}
@@ -6604,6 +6645,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${editImageMode ? ' active' : ''}`}
+                    aria-pressed={!!editImageMode}
                     disabled={readOnly}
                     data-tip={t('editImageHint')}
                     onClick={() => {
@@ -6639,6 +6681,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${drawTool === 'link' ? ' active' : ''}`}
+                    aria-pressed={drawTool === 'link'}
                     disabled={readOnly}
                     data-tip={t('linkToolHint')}
                     onClick={() => {
@@ -6669,6 +6712,7 @@ export default function App() {
                       <button
                         key={type}
                         className={`rb-big${active ? ' active' : ''}`}
+                        aria-pressed={active}
                         disabled={readOnly}
                         data-tip={t(key)}
                         onClick={() => {
@@ -6723,6 +6767,7 @@ export default function App() {
                 <div className="ribbon-group-items">
                   <button
                     className={`rb-big${pendingStaticFill === 'text' ? ' active' : ''}`}
+                    aria-pressed={pendingStaticFill === 'text'}
                     disabled={readOnly}
                     data-tip={t('formAddTextHint')}
                     onClick={() => {
@@ -6741,6 +6786,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${pendingStaticFill === 'check' ? ' active' : ''}`}
+                    aria-pressed={pendingStaticFill === 'check'}
                     disabled={readOnly}
                     data-tip={t('formAddCheckHint')}
                     onClick={() => startStaticFormMark('check')}
@@ -6752,6 +6798,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${pendingStaticFill === 'cross' ? ' active' : ''}`}
+                    aria-pressed={pendingStaticFill === 'cross'}
                     disabled={readOnly}
                     data-tip={t('formAddCrossHint')}
                     onClick={() => startStaticFormMark('cross')}
@@ -6821,6 +6868,7 @@ export default function App() {
                   </button>
                   <button
                     className={`rb-big${imagePick && !pendingStaticFill ? ' active' : ''}`}
+                    aria-pressed={!!(imagePick && !pendingStaticFill)}
                     disabled={readOnly}
                     data-tip={t('insertImageHint')}
                     onClick={() => (imagePick ? setImagePick(null) : pickInsertImage())}
@@ -7022,6 +7070,7 @@ export default function App() {
             </>
           )}
         </div>
+        <RibbonCollapseButton state={collapse} label={t('ribbonCollapse')} />
       </div>
       <input
         ref={imageFileRef}
@@ -7124,7 +7173,13 @@ export default function App() {
               </div>
             )}
             {sidebar === 'thumbs' && (
-              <div ref={thumbsRef} className="pdf-thumbs" style={{ width: sidebarW }}>
+              <div
+                ref={thumbsRef}
+                className="pdf-thumbs"
+                style={{ width: sidebarW }}
+                role="listbox"
+                aria-label={t('thumbs')}
+              >
                 {visList.map((origIdx, v) => {
                   const size = dispSize(origIdx)
                   return (
@@ -7132,7 +7187,11 @@ export default function App() {
                       key={origIdx}
                       ref={setThumbRef(v)}
                       data-idx={v}
-                      tabIndex={-1}
+                      // one Tab stop for the rail: the current page; arrows step from there
+                      tabIndex={currentPage === v + 1 ? 0 : -1}
+                      role="option"
+                      aria-selected={currentPage === v + 1}
+                      aria-label={t('appPageOf', { current: v + 1, total: visList.length })}
                       className={`pdf-thumb${currentPage === v + 1 ? ' pdf-thumb-active' : ''}${
                         dragOver === v && dragFrom !== null && dragFrom !== v
                           ? ' pdf-thumb-dropbefore'
@@ -7163,6 +7222,11 @@ export default function App() {
                         setDragOver(null)
                       }}
                       onClick={() => scrollToPage(v + 1)}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'Enter' && e.key !== ' ') return
+                        e.preventDefault()
+                        scrollToPage(v + 1)
+                      }}
                       onContextMenu={(e) => {
                         e.preventDefault()
                         setThumbMenu({
@@ -7971,6 +8035,7 @@ export default function App() {
                                           />
                                           <button
                                             className={`pdf-textedit-toggle${textDraft.bold ? ' active' : ''}`}
+                                            aria-pressed={!!textDraft.bold}
                                             data-tip={t('texteditBold')}
                                             onClick={() => toggleDraftFlag('bold')}
                                           >
@@ -7980,6 +8045,7 @@ export default function App() {
                                             className={`pdf-textedit-toggle pdf-textedit-toggle-i${
                                               textDraft.italic ? ' active' : ''
                                             }`}
+                                            aria-pressed={!!textDraft.italic}
                                             data-tip={t('texteditItalic')}
                                             onClick={() => toggleDraftFlag('italic')}
                                           >
@@ -8554,6 +8620,7 @@ export default function App() {
                   ref={searchInputRef}
                   className="pdf-search-input"
                   placeholder={searchRedact ? t('redactFindPlaceholder') : t('search')}
+                  aria-label={searchRedact ? t('redactFindPlaceholder') : t('search')}
                   disabled={!!searchPattern}
                   value={searchPattern ? '' : searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -8601,7 +8668,12 @@ export default function App() {
                     {t('redactMarkAll')}
                   </button>
                 )}
-                <button className="rb-icon" onClick={closeSearch}>
+                <button
+                  className="rb-icon"
+                  data-tip={t('noteClose')}
+                  aria-label={t('noteClose')}
+                  onClick={closeSearch}
+                >
                   ×
                 </button>
               </div>
@@ -9405,6 +9477,8 @@ export default function App() {
               <input
                 className="zoom-slider"
                 type="range"
+                aria-label={t('zoomLevel')}
+                aria-valuetext={`${Math.round(scale * 100)}%`}
                 min={MIN_SCALE * 100}
                 max={MAX_SCALE * 100}
                 step={5}

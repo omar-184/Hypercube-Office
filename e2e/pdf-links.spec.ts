@@ -32,7 +32,7 @@ test('a link is drawn, pointed at a web address, saved and then removed', async 
   try {
     const editor = await waitForPageWithUrl(launched.app, '://pdf/')
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
-    await editor.getByRole('button', { name: 'Edit', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Edit', exact: true }).click()
     await editor.getByRole('button', { name: 'Link', exact: true }).click()
 
     const layer = editor.locator('.pdf-page .pdf-draw-layer').first()
