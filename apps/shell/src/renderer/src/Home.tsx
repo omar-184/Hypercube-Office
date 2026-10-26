@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { DragEvent as ReactDragEvent, ReactElement } from 'react'
+import type {
+  DragEvent as ReactDragEvent,
+  KeyboardEvent as ReactKeyboardEvent,
+  ReactElement,
+} from 'react'
 import logoLockup from './assets/hypercube-office-logo.svg'
 import iconDocx from './assets/file-docx.svg'
 import iconXlsx from './assets/file-xlsx.svg'
@@ -425,6 +429,26 @@ function FolderPicker({
     movingDirs.some((m) => isUnder(m, dir)) ||
     rootOf(dir, roots)?.usable === false
 
+  const toggleOpen = (dir: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(dir)) next.delete(dir)
+      else next.add(dir)
+      return next
+    })
+
+  // the sidebar tree's keyboard model: Enter/Space pick a folder, Enter on the
+  // picked one moves there (the double-click), arrows open and close
+  const onRowKeyDown = (e: ReactKeyboardEvent, dir: string, disabled: boolean, open?: boolean) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (disabled) return
+      if (e.key === 'Enter' && picked === dir) onPick(dir)
+      else setPicked(dir)
+    } else if (e.key === 'ArrowRight' && open === false) toggleOpen(dir)
+    else if (e.key === 'ArrowLeft' && open === true) toggleOpen(dir)
+  }
+
   // Enter or blur commits, Escape cancels; the blur an unmount may fire reads
   // the edit from a ref mirrored during render, so a finished edit is a no-op
   const creatingRef = useRef<{ parent: string; name: string } | null>(null)
@@ -463,13 +487,23 @@ function FolderPicker({
           style={{ paddingLeft: 8 + depth * 16 }}
           role="treeitem"
           aria-selected={picked === entry.path}
+          aria-disabled={disabled || undefined}
           aria-expanded={children.length > 0 ? isOpen : undefined}
+          tabIndex={0}
           onClick={() => {
             if (!disabled) setPicked(entry.path)
           }}
           onDoubleClick={() => {
             if (!disabled) onPick(entry.path)
           }}
+          onKeyDown={(e) =>
+            onRowKeyDown(
+              e,
+              entry.path,
+              disabled,
+              listing && children.length === 0 ? undefined : isOpen,
+            )
+          }
         >
           <button
             className="tree-chevron"
@@ -478,12 +512,7 @@ function FolderPicker({
             style={{ visibility: listing && children.length === 0 ? 'hidden' : undefined }}
             onClick={(e) => {
               e.stopPropagation()
-              setExpanded((prev) => {
-                const next = new Set(prev)
-                if (next.has(entry.path)) next.delete(entry.path)
-                else next.add(entry.path)
-                return next
-              })
+              toggleOpen(entry.path)
             }}
           >
             <Chevron open={isOpen} />
@@ -548,12 +577,15 @@ function FolderPicker({
                 className={`picker-row${picked === h.path ? ' active' : ''}${disabled ? ' disabled' : ''}`}
                 role="treeitem"
                 aria-selected={picked === h.path}
+                aria-disabled={disabled || undefined}
+                tabIndex={0}
                 onClick={() => {
                   if (!disabled) setPicked(h.path)
                 }}
                 onDoubleClick={() => {
                   if (!disabled) onPick(h.path)
                 }}
+                onKeyDown={(e) => onRowKeyDown(e, h.path, disabled)}
               >
                 <span className="tree-chevron" aria-hidden="true" />
                 <FolderIcon />

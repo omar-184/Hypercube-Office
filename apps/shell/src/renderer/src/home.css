@@ -1251,6 +1251,11 @@ body.vib .home {
   background: var(--accent-soft);
 }
 
+.picker-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
 .picker-row.disabled {
   color: var(--text-muted);
   cursor: default;
