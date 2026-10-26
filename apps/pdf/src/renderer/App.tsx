@@ -137,7 +137,12 @@ import {
 } from './color-runs'
 import type { CharStyle } from './color-runs'
 import { platformShortcuts } from '@genoffice/i18n'
-import { Dropdown, useDismissablePopover, useRibbonCollapse } from '@genoffice/ui'
+import {
+  Dropdown,
+  RibbonCollapseButton,
+  useDismissablePopover,
+  useRibbonCollapse,
+} from '@genoffice/ui'
 import { useI18n } from './i18n/locale'
 import { useAutosave } from './useAutosave'
 import { containsAscii } from '../shared/ascii-search'
@@ -7022,6 +7027,7 @@ export default function App() {
             </>
           )}
         </div>
+        <RibbonCollapseButton state={collapse} label={t('ribbonCollapse')} />
       </div>
       <input
         ref={imageFileRef}

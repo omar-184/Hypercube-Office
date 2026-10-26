@@ -4,6 +4,7 @@ import { platformShortcuts } from '@genoffice/i18n'
 import {
   Dropdown,
   SHAPE_GALLERY_GROUPS,
+  RibbonCollapseButton,
   ShapePreview,
   useDismissablePopover,
   useRibbonCollapse,
@@ -596,6 +597,7 @@ export function ExcelShell({
           onIsSelectionInPivot={onIsSelectionInPivot}
           onCommand={dispatchCommand}
         />
+        <RibbonCollapseButton state={collapse} label={t('appRibbonCollapse')} />
       </header>
 
       <div className="sheet-body">

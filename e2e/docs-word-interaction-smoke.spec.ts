@@ -223,7 +223,7 @@ test.describe.serial('docs Word interaction smoke', () => {
 
   const tab = (name: string) => editor.locator('.ribbon-tab', { hasText: new RegExp(`^${name}$`) })
   const activeTab = () => editor.locator('.ribbon-tab.active')
-  // clicking the active tab collapses the ribbon (Word for Mac), so only switch when needed
+  // switch only when needed: a click on the active tab is a no-op (it used to collapse the ribbon)
   const showTab = async (name: string) => {
     if ((await activeTab().textContent()) !== name) await tab(name).click()
     await expect(activeTab()).toHaveText(name)

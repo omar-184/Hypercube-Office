@@ -42,6 +42,7 @@ import type {
 import {
   Dropdown,
   isSymbolFontFamily,
+  RibbonCollapseButton,
   useDismissablePopover,
   useRibbonCollapse,
 } from '@genoffice/ui'
@@ -4115,6 +4116,7 @@ function RibbonInner({
           onCancel={() => setPictureDialog(null)}
         />
       )}
+      <RibbonCollapseButton state={collapse} label={t('ribbonCollapse')} />
     </div>
   )
 }

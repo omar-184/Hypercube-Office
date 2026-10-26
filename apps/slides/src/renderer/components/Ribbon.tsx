@@ -14,6 +14,7 @@ import React, {
 import type { AnimEffectKind, GradientFillSpec, TransitionKind } from '../../shared/ipc'
 import type { ChartStyleInfo } from '@genoffice/pptx-render'
 import {
+  RibbonCollapseButton,
   useDismissablePopover,
   useRibbonCollapse,
   Dropdown,
@@ -3356,6 +3357,7 @@ export function Ribbon({
           </>
         ) : null}
       </div>
+      <RibbonCollapseButton state={collapse} label={t('ribbonCollapse')} />
     </div>
   )
 }

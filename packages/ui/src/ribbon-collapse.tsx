@@ -1,9 +1,12 @@
 /**
- * Word for Mac "Collapse ribbon": the tab row stays, the command band hides.
- * The selected tab doubles as the collapse control; while collapsed no tab is
- * selected and pressing any tab expands the band again (it stays expanded —
- * no peek overlay, no pin). Double-clicking a tab and Ctrl+F1 (⌥⌘R on macOS)
- * toggle too. The state persists per app in localStorage.
+ * Office "Collapse ribbon": the tab row stays, the command band hides. As in
+ * Office for Windows, a single press on the selected tab does nothing — that
+ * used to collapse (Word for Mac), which hid every command on a stray click and
+ * kept them hidden across launches. Collapsing takes a double-click on a tab,
+ * Ctrl+F1 (⌥⌘R on macOS) or the band's corner chevron (`RibbonCollapseButton`).
+ * While collapsed no tab is selected and pressing any tab expands the band
+ * again (it stays expanded — no peek overlay, no pin). The state persists per
+ * app in localStorage.
  *
  * An optional middle density, "compact" (icon-only commands on a shorter
  * band), is opt-in per call site: it needs `labels.compact` / `labels.expandFull`
@@ -12,10 +15,11 @@
  * (Ctrl+Alt+K) cycles full ↔ compact. See #362.
  *
  * Markup contract: the ribbon root carries `rootRef` + `rootClass`, the band
- * element carries `data-ribbon-body`, tabs render `tabClass` / `tabTip` and
- * call `onTabPress`. Ribbons without tabs use `RibbonCollapseButton` +
- * `RibbonExpandButton` instead (ribbon-collapse.css anchors the former to the
- * band's corner).
+ * element carries `data-ribbon-body`, and `RibbonCollapseButton` is a direct
+ * child of the root (ribbon-collapse.css anchors it to the band's corner and
+ * reserves room for it). Tabbed ribbons render `tabClass` / `tabTip` and call
+ * `onTabPress`; ribbons without tabs add `RibbonExpandButton` to the tab row,
+ * since there is no tab to press while collapsed.
  */
 import { useCallback, useEffect, useRef, useState, type MouseEvent, type RefObject } from 'react'
 
@@ -105,7 +109,7 @@ export interface RibbonCollapse {
   readonly toggle: () => void
   /** cycle full ↔ compact (no-op when the call site did not opt in) */
   readonly toggleCompact: () => void
-  /** call from every tab button's click handler */
+  /** call from every tab button's click handler; it only ever expands */
   readonly onTabPress: (wasActive: boolean) => void
   /** double-click on a tab toggles, like Office; attach to the tab row */
   readonly onTabsDoubleClick: (e: MouseEvent) => void
@@ -167,10 +171,12 @@ export function useRibbonCollapse(
   // state before the first of them
   const pressHistory = useRef<RibbonDensity[]>([])
 
+  // `wasActive` stays in the signature for the call sites; pressing the selected
+  // tab no longer collapses (see the header comment)
   const onTabPress = useCallback(
-    (wasActive: boolean) => {
+    (_wasActive: boolean) => {
       pressHistory.current = [...pressHistory.current.slice(-1), densityRef.current]
-      if (densityRef.current === 'collapsed' || wasActive) toggle()
+      if (densityRef.current === 'collapsed') toggle()
     },
     [toggle],
   )
@@ -204,14 +210,14 @@ export function useRibbonCollapse(
   }, [toggle, toggleCompact, compactEnabled])
 
   const tabClass = (isActive: boolean) => (isActive && !collapsed ? 'active' : '')
+  // pressing the selected tab does nothing now, so it offers no Collapse tip (the
+  // corner chevron carries that); it still names the density shortcut
   const tabTip = (isActive: boolean) => {
     if (collapsed) return `${labels.expand} (${RIBBON_TOGGLE_SHORTCUT})`
-    if (!isActive) return undefined
-    if (!compactEnabled) return `${labels.collapse} (${RIBBON_TOGGLE_SHORTCUT})`
-    // while compact the band toggle would collapse; offer both ways out
+    if (!isActive || !compactEnabled) return undefined
     return density === 'compact'
       ? `${labels.expandFull} (${RIBBON_COMPACT_SHORTCUT})`
-      : `${labels.collapse} (${RIBBON_TOGGLE_SHORTCUT}) · ${labels.compact} (${RIBBON_COMPACT_SHORTCUT})`
+      : `${labels.compact} (${RIBBON_COMPACT_SHORTCUT})`
   }
 
   const rootClass = `ribbon-collapsible${collapsed ? ' ribbon-collapsed' : ''}${
