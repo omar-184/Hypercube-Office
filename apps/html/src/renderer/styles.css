@@ -23,7 +23,8 @@
 }
 
 [data-theme='dark'] {
-  --hx-on-accent: #ffffff;
+  /* the dark theme's accent is near-white, so its ink is dark */
+  --hx-on-accent: #111111;
   --hx-node-outline: color-mix(in srgb, var(--accent) 70%, transparent);
   --hx-error: #ef5350;
   --hx-error-bg: rgb(239 83 80 / 10%);
@@ -46,7 +47,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --hx-on-accent: #ffffff;
+    /* the dark theme's accent is near-white, so its ink is dark */
+    --hx-on-accent: #111111;
     --hx-node-outline: color-mix(in srgb, var(--accent) 70%, transparent);
     --hx-error: #ef5350;
     --hx-error-bg: rgb(239 83 80 / 10%);
@@ -177,7 +179,13 @@ html.genoffice-popover-open .ribbon-tabs {
 }
 
 .autosave-toggle input {
-  display: none;
+  /* unseen but in the tab order; the label shows the focus (ui/a11y.css) */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .autosave-knob {

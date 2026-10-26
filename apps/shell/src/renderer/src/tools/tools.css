@@ -48,11 +48,6 @@
   box-shadow: var(--shadow-btn-hover);
 }
 
-.pt-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
 .pt-card-icon,
 .pt-panel-icon {
   flex-shrink: 0;
@@ -415,11 +410,6 @@
 .pt-choice-item.active {
   border-color: var(--accent);
   background: var(--accent-soft);
-}
-
-.pt-choice-item:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 .pt-choice-label {

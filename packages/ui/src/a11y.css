@@ -1,0 +1,87 @@
+/* Keyboard focus and Windows Contrast themes, shared by every window.
+ * Imported right after tokens.css: an app rule may move the ring (an inset
+ * offset for rows in a scrolling list) but must not remove it from a
+ * control. Text fields and document surfaces keep their own focus: the
+ * caret, plus a border in the field's own style. */
+
+/* one ring for everything the keyboard reaches: the app accent, 2px, outside */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* the ribbon band clips what is drawn outside a command, so the ring goes inside */
+[data-ribbon-body] :focus-visible {
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/* dialogs and viewers that hold focus themselves: their controls show it */
+[role='dialog']:focus-visible,
+[role='alertdialog']:focus-visible {
+  outline: none;
+}
+
+/* AutoSave (every editor): the checkbox is unseen but stays in the tab order;
+ * its label shows the ring */
+.autosave-toggle {
+  position: relative;
+}
+
+.autosave-toggle:has(input:focus-visible) {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-6);
+}
+
+/* Windows Contrast themes repaint every color with system colors and drop
+ * box-shadows, so states drawn as a tint, a shadow or a background bar
+ * vanish. These give each state a shape the theme keeps. :where() keeps them
+ * below any focus ring. */
+@media (forced-colors: active) {
+  :focus-visible,
+  .autosave-toggle:has(input:focus-visible) {
+    outline-color: Highlight;
+  }
+
+  /* a pressed toggle or an armed tool */
+  :where([aria-pressed='true'], [role='radio'][aria-checked='true']) {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+
+  /* the selected tab's underline is a background bar: underline the label instead */
+  :where([role='tab'][aria-selected='true']) {
+    text-decoration: underline 2px;
+    text-underline-offset: 5px;
+  }
+
+  /* chosen rows and options */
+  :where(
+    [role='option'][aria-selected='true'],
+    [role='treeitem'][aria-selected='true'],
+    [role='row'][aria-selected='true']
+  ) {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  /* switches: a real outline, a knob in text color, and the system highlight when on */
+  :where([role='switch'], .autosave-knob) {
+    border: 1px solid CanvasText;
+  }
+
+  :where([role='switch'], .autosave-knob)::after {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  :where([role='switch'][aria-checked='true'], .autosave-toggle.on .autosave-knob) {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  :where([role='switch'][aria-checked='true'], .autosave-toggle.on .autosave-knob)::after {
+    background: HighlightText;
+  }
+}

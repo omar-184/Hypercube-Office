@@ -18,8 +18,9 @@
   --text: #242424;
   --text-primary: #232425;
   --text-secondary: #606366;
-  --text-tertiary: #909499;
-  --text-muted: #878e96;
+  /* tertiary and muted text: at least 4.5:1 on every light surface up to --hover */
+  --text-tertiary: #6b7178;
+  --text-muted: #6b7178;
   --text-dim: #605e5c;
   --hover: #f5f5f5;
   --pressed: #edebe9;
@@ -29,7 +30,8 @@
   --bg-hover-strong: #e8eaee;
   --bg-hover-accent: #e0e4ea;
   --bg-content: #fafafa;
-  --icon-muted: #b9bfc7;
+  /* icon-only controls: at least 3:1 on white */
+  --icon-muted: #8a9098;
   --danger: #d13438;
   --danger-bg: #fdf3f3;
   /* Word's changed-line bar (Simple Markup): fixed red, tuned per theme */
@@ -61,7 +63,7 @@
   --color-brand-secondary: #0f7fff;
   --color-text-primary: #232425;
   --color-text-secondary: #606366;
-  --color-text-tertiary: #909499;
+  --color-text-tertiary: #6b7178;
   --color-bg-page: #ffffff;
   --color-bg-subtle: #f5f5f5;
   --color-border-default: #eaeaea;
@@ -70,7 +72,12 @@
   --color-error: #ef4444;
   --color-error-hover: #dc2626;
 
+  /* keyboard focus (a11y.css): the app's accent, which each app sets on :root */
+  --focus-ring-color: var(--accent, #0f7fff);
+
   /* non-color */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
   --radius-6: 6px;
   --radius-8: 8px;
   --radius-12: 12px;
@@ -95,10 +102,11 @@
   --border-hover: #555;
   --text: #e4e4e4;
   --text-primary: #e4e4e4;
-  --text-secondary: #a0a0a0;
-  --text-tertiary: #a0a0a0;
-  --text-muted: #8a8a8a;
-  --text-dim: #a0a0a0;
+  /* two distinct levels, both at least 4.5:1 on every dark surface up to --hover */
+  --text-secondary: #b8b8b8;
+  --text-tertiary: #9e9e9e;
+  --text-muted: #9e9e9e;
+  --text-dim: #b8b8b8;
   --hover: #333;
   --pressed: #3c3c3c;
   --active-bg: #454545;
@@ -107,7 +115,7 @@
   --bg-hover-strong: #444;
   --bg-hover-accent: #444;
   --bg-content: #1a1a1a;
-  --icon-muted: #666;
+  --icon-muted: #808080;
   --danger: #d13438;
   --danger-bg: #3a2020;
   --docs-revision-bar: #ff6b6b;
@@ -133,13 +141,14 @@
   --color-ai-action-text: #ffffff;
   --color-brand-secondary: #4a9eff;
   --color-text-primary: #e4e4e4;
-  --color-text-secondary: #a0a0a0;
-  --color-text-tertiary: #8a8a8a;
+  --color-text-secondary: #b8b8b8;
+  --color-text-tertiary: #9e9e9e;
   --color-bg-page: #1e1e1e;
   --color-bg-subtle: #2a2a2a;
   --color-border-default: #3a3a3a;
   --color-border-strong: #555;
   --color-border-brand: #4a9eff;
+  --focus-ring-color: var(--accent, #3f99ff);
 
   color-scheme: dark;
 }
@@ -156,10 +165,11 @@
     --border-hover: #555;
     --text: #e4e4e4;
     --text-primary: #e4e4e4;
-    --text-secondary: #a0a0a0;
-    --text-tertiary: #a0a0a0;
-    --text-muted: #8a8a8a;
-    --text-dim: #a0a0a0;
+    /* two distinct levels, both at least 4.5:1 on every dark surface up to --hover */
+    --text-secondary: #b8b8b8;
+    --text-tertiary: #9e9e9e;
+    --text-muted: #9e9e9e;
+    --text-dim: #b8b8b8;
     --hover: #333;
     --pressed: #3c3c3c;
     --active-bg: #454545;
@@ -168,7 +178,7 @@
     --bg-hover-strong: #444;
     --bg-hover-accent: #444;
     --bg-content: #1a1a1a;
-    --icon-muted: #666;
+    --icon-muted: #808080;
     --danger: #d13438;
     --danger-bg: #3a2020;
     --docs-revision-bar: #ff6b6b;
@@ -194,13 +204,14 @@
     --color-ai-action-text: #ffffff;
     --color-brand-secondary: #4a9eff;
     --color-text-primary: #e4e4e4;
-    --color-text-secondary: #a0a0a0;
-    --color-text-tertiary: #8a8a8a;
+    --color-text-secondary: #b8b8b8;
+    --color-text-tertiary: #9e9e9e;
     --color-bg-page: #1e1e1e;
     --color-bg-subtle: #2a2a2a;
     --color-border-default: #3a3a3a;
     --color-border-strong: #555;
     --color-border-brand: #4a9eff;
+    --focus-ring-color: var(--accent, #3f99ff);
 
     color-scheme: dark;
   }

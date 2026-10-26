@@ -7,6 +7,7 @@
   "description": "Shared renderer UI components for the office apps (color picker, find panel, ribbon, image dialogs, icons); styling stays per-app via the shared class names",
   "exports": {
     ".": "./src/index.ts",
+    "./a11y.css": "./src/a11y.css",
     "./color-picker.css": "./src/color-picker.css",
     "./dropdown.css": "./src/dropdown.css",
     "./find-panel.css": "./src/find-panel.css",

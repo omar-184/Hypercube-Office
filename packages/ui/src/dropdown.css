@@ -32,7 +32,6 @@
 
 .gs-dd-btn:focus-visible {
   border-color: var(--accent);
-  outline: none;
 }
 
 .gs-dd-btn:disabled {

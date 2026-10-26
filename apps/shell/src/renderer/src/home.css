@@ -865,12 +865,6 @@ body.vib .home {
   transform: scale(0.98);
 }
 
-.btn:focus-visible {
-  outline: none;
-  --home-shadow-3: 0 0 0 3px rgb(35 36 37 / 20%);
-  box-shadow: var(--home-shadow-3);
-}
-
 .btn-secondary {
   background: var(--surface);
   border: 1px solid var(--color-border-default);
@@ -1632,7 +1626,10 @@ body.vib .home {
 .search-row:hover,
 .search-row:focus-visible {
   background: var(--hover);
-  outline: none;
+}
+
+.search-row:focus-visible {
+  outline-offset: -2px;
 }
 .search-row .recent-icon {
   margin-top: 1px;
