@@ -1,5 +1,7 @@
 /* PDF tools area on Home. Chrome only: every color is a token. */
 
+/* width cap on an inner wrapper: on the scrolling <main> itself it cut the
+ * painted background short and left the scrollbar floating mid-window */
 .pt-content {
   max-width: 1120px;
 }
@@ -413,6 +415,11 @@
 .pt-choice-item.active {
   border-color: var(--accent);
   background: var(--accent-soft);
+}
+
+.pt-choice-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .pt-choice-label {
