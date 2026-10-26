@@ -3,22 +3,39 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber } from 'pdf-lib'
+import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFNumber } from 'pdf-lib'
 import { launchShell, waitForPageWithUrl, closeAndSaveVideo } from './helpers'
 
 const SIGNED_MSG = 'This PDF is digitally signed.'
 
-/** One page carrying a signature value dictionary, written uncompressed the way signers do */
+const PLACEHOLDER = 1111111111
+
+/**
+ * One page carrying a signature value dictionary laid out the way signers do: written
+ * uncompressed with a /Contents hex placeholder, then /ByteRange patched in place to
+ * frame it, so the app sees an intact signature
+ */
 async function signedPdf(): Promise<Uint8Array> {
   const pdf = await PDFDocument.create()
   pdf.addPage([400, 300])
   const sig = pdf.context.obj({
     Type: 'Sig',
     Filter: 'Adobe.PPKLite',
-    ByteRange: pdf.context.obj([0, 0, 0, 0].map((n) => PDFNumber.of(n))),
+    ByteRange: pdf.context.obj(
+      [PLACEHOLDER, PLACEHOLDER, PLACEHOLDER, PLACEHOLDER].map((n) => PDFNumber.of(n)),
+    ),
+    Contents: PDFHexString.of('00'.repeat(64)),
   })
   pdf.catalog.set(PDFName.of('TestSignature'), pdf.context.register(sig))
-  return pdf.save({ useObjectStreams: false })
+  const text = Buffer.from(await pdf.save({ useObjectStreams: false })).toString('latin1')
+  const gapStart = text.indexOf('<' + '00'.repeat(64) + '>')
+  const gapEnd = gapStart + 2 + 128
+  const values = [0, gapStart, gapEnd, text.length - gapEnd]
+  let i = 0
+  const patched = text.replace(new RegExp(String(PLACEHOLDER), 'g'), () =>
+    String(values[i++]).padStart(String(PLACEHOLDER).length, '0'),
+  )
+  return Buffer.from(patched, 'latin1')
 }
 
 async function freeTexts(path: string): Promise<string[]> {
@@ -59,6 +76,17 @@ async function answerNext(app: ElectronApplication, label: string): Promise<void
 
 async function shownBoxes(app: ElectronApplication): Promise<string[]> {
   return app.evaluate(() => (globalThis as unknown as { __boxes: string[] }).__boxes)
+}
+
+/** The window with the Home screen's API (firstWindow() may be an editor view instead) */
+async function shellPage(app: ElectronApplication): Promise<Page> {
+  for (const page of app.windows()) {
+    const hasApi = await page
+      .evaluate(() => Boolean((window as unknown as { hyperFiles?: unknown }).hyperFiles))
+      .catch(() => false)
+    if (hasApi) return page
+  }
+  throw new Error('No window exposing window.hyperFiles')
 }
 
 async function addTextBox(editor: Page, text: string, at: number): Promise<void> {
@@ -143,6 +171,48 @@ test('Save as a Copy keeps the signed original and writes the edits to the copy'
     expect(Buffer.compare(await readFile(source), Buffer.from(original))).toBe(0)
   } finally {
     await closeAndSaveVideo(launched, 'pdf-signed-save-copy')
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('renaming an open signed PDF keeps the warning for the renamed file', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'hyperfiles-signed-rename-'))
+  const source = join(dir, 'signed.pdf')
+  const renamed = join(dir, 'signed-renamed.pdf')
+  const original = await signedPdf()
+  await writeFile(source, original)
+  const launched = await launchShell({
+    onboardingSeen: true,
+    videoDir: 'pdf-signed-save-rename',
+    openFile: source,
+  })
+  try {
+    await stubDialogs(launched.app, join(dir, 'unused.pdf'))
+    const editor = await waitForPageWithUrl(launched.app, '://pdf/')
+    await expect(editor.locator('.pdf-page').first()).toBeVisible()
+    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await addTextBox(editor, 'After rename', 0.3)
+
+    // Rename the open file through the Home screen's rename (the view keeps its document)
+    const shell = await shellPage(launched.app)
+    const result = await shell.evaluate(
+      ([path, name]) =>
+        (
+          window as unknown as {
+            hyperFiles: { renameFile(p: string, n: string): Promise<{ ok: boolean }> }
+          }
+        ).hyperFiles.renameFile(path!, name!),
+      [source, 'signed-renamed.pdf'],
+    )
+    expect(result.ok).toBe(true)
+    await expect.poll(() => existsSync(renamed)).toBe(true)
+
+    await answerNext(launched.app, 'Cancel')
+    await editor.keyboard.press('ControlOrMeta+s')
+    await expect.poll(() => shownBoxes(launched.app)).toEqual([SIGNED_MSG])
+    expect(Buffer.compare(await readFile(renamed), Buffer.from(original))).toBe(0)
+  } finally {
+    await closeAndSaveVideo(launched, 'pdf-signed-save-rename')
     await rm(dir, { recursive: true, force: true })
   }
 })

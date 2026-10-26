@@ -63,6 +63,40 @@ export function installedDictionaryLanguages(dictionariesDir: string): Set<strin
 }
 
 /**
+ * The dictionary a Chromium spell-check language code loads, if it is on disk. Codes and
+ * file names differ: a bare code loads its regional dictionary (de → de-DE, ru → ru-RU),
+ * every Spanish variant shares es-ES, and regional codes load their own (pt-BR, en-GB).
+ */
+export function dictionaryForLanguage(code: string, installed: Set<string>): string | null {
+  if (installed.has(code)) return code
+  if (code === 'es' || code.startsWith('es-')) return installed.has('es-ES') ? 'es-ES' : null
+  if (code.includes('-')) return null
+  for (const lang of installed) if (lang.startsWith(`${code}-`)) return lang
+  return null
+}
+
+/**
+ * Chromium starts spell checking in the system language. When none of the active
+ * languages has a dictionary on disk (a German or Arabic Windows, say), nothing is
+ * checked and the editor's language menu, which only shows on a misspelled word, cannot
+ * be reached. Returns the shipped English dictionary to switch to, or null to keep the
+ * active languages.
+ */
+export function fallbackSpellLanguage(
+  active: string[],
+  locale: string,
+  installed: Set<string>,
+  available: string[],
+): string | null {
+  if (active.some((code) => dictionaryForLanguage(code, installed) !== null)) return null
+  const british = /^en[-_](GB|AU|NZ|IE|ZA|IN)\b/i.test(locale)
+  for (const code of british ? ['en-GB', 'en-US'] : ['en-US', 'en-GB']) {
+    if (installed.has(code) && available.includes(code)) return code
+  }
+  return null
+}
+
+/**
  * Download address for missing dictionaries: the shipped folder, so a request for a
  * language the app does not ship fails locally instead of reaching the network
  */

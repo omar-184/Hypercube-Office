@@ -2,15 +2,17 @@ export const PREVIEW_SCHEME = 'html-preview'
 export const ASSET_SCHEME = 'html-asset'
 
 /** Encode an absolute directory as an html-asset base URL with a trailing slash.
- * The scheme is registered as standard, so it needs a host; `local` is a fixed placeholder. */
-export function assetBaseHref(documentDir: string): string {
+ * The scheme is registered as standard, so it needs a host: `view-<id>` names the editor
+ * view the preview belongs to (the asset handler applies that view's web-content choice
+ * to the local documents a page frames), `local` is a neutral placeholder. */
+export function assetBaseHref(documentDir: string, viewId?: number): string {
   const normalized = documentDir.replace(/\\/g, '/').replace(/\/+$/, '')
   const path = normalized.startsWith('/') ? normalized : `/${normalized}`
   const encoded = path
     .split('/')
     .map((segment) => encodeURIComponent(segment).replace(/%3A/gi, ':'))
     .join('/')
-  return `${ASSET_SCHEME}://local${encoded}/`
+  return `${ASSET_SCHEME}://${viewId === undefined ? 'local' : `view-${viewId}`}${encoded}/`
 }
 
 /**
@@ -128,7 +130,9 @@ function leadingDoctypeEnd(text: string): number {
 /**
  * Content policy for a preview whose web content is blocked: the document's own inline
  * code and its local files (html-asset:, data:, blob:) load, nothing from the network does.
- * An author's own policy can only narrow this further.
+ * An author's own policy can only narrow this further. A local document the page frames
+ * (an SVG chart in an <object>) gets the same policy from the asset handler, since a
+ * framed file does not inherit its parent's.
  */
 export const BLOCK_REMOTE_CSP = [
   "default-src html-preview: html-asset: data: blob: 'unsafe-inline' 'unsafe-eval'",
@@ -144,6 +148,11 @@ export const REMOTE_GUARD_SCRIPT =
   '<script data-gx-inspector>(() => {' +
   'const state = { count: 0, notify: null };' +
   'window.__gxRemoteBlocked = state;' +
+  // No content policy covers WebRTC: take the constructors away while web content is
+  // blocked (the editor views also refuse non-proxied UDP, see html-main.ts)
+  "for (const name of ['RTCPeerConnection', 'webkitRTCPeerConnection', 'RTCDataChannel']) {" +
+  'try { Object.defineProperty(window, name, { value: undefined, configurable: false }) } catch {}' +
+  '}' +
   "document.addEventListener('securitypolicyviolation', (e) => {" +
   'if (!/^(https?|wss?):/i.test(e.blockedURI)) return;' +
   'state.count += 1;' +

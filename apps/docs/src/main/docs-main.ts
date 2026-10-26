@@ -63,6 +63,7 @@ import {
 } from '@genoffice/electron-utils'
 import {
   DICTIONARIES_DIR_NAME,
+  dictionaryForLanguage,
   installedDictionaryLanguages,
 } from '@genoffice/electron-utils/spell-dictionaries'
 import { configureMetricsCache, familyVerticalMetrics } from '@genoffice/font-metrics'
@@ -3555,7 +3556,7 @@ export function registerDocsIpc(): void {
       process.platform === 'darwin'
         ? null
         : installedDictionaryLanguages(userDataPath(DICTIONARIES_DIR_NAME))
-    const usable = (l: string) => installed === null || installed.has(l)
+    const usable = (l: string) => installed === null || dictionaryForLanguage(l, installed) !== null
     return {
       active: session.getSpellCheckerLanguages().filter(usable),
       available: session.availableSpellCheckerLanguages.filter(usable),

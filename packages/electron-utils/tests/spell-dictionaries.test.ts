@@ -3,7 +3,9 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
+  dictionaryForLanguage,
   dictionaryLanguage,
+  fallbackSpellLanguage,
   installedDictionaryLanguages,
   localDictionaryDownloadUrl,
   seedSpellDictionaries,
@@ -78,5 +80,52 @@ describe('localDictionaryDownloadUrl', () => {
     const url = localDictionaryDownloadUrl(join(tmpdir(), 'dictionaries'))
     expect(url.startsWith('file://')).toBe(true)
     expect(url.endsWith('/dictionaries/')).toBe(true)
+  })
+})
+
+describe('dictionaryForLanguage', () => {
+  const installed = new Set(['en-US', 'en-GB', 'de-DE', 'ru-RU', 'es-ES', 'pt-BR', 'sh'])
+
+  it('maps Chromium language codes to the dictionary file they load', () => {
+    expect(dictionaryForLanguage('en-US', installed)).toBe('en-US')
+    expect(dictionaryForLanguage('de', installed)).toBe('de-DE')
+    expect(dictionaryForLanguage('ru', installed)).toBe('ru-RU')
+    expect(dictionaryForLanguage('es', installed)).toBe('es-ES')
+    expect(dictionaryForLanguage('es-MX', installed)).toBe('es-ES')
+    expect(dictionaryForLanguage('es-419', installed)).toBe('es-ES')
+    expect(dictionaryForLanguage('pt-BR', installed)).toBe('pt-BR')
+    expect(dictionaryForLanguage('sh', installed)).toBe('sh')
+  })
+
+  it('finds nothing for a language without a dictionary on disk', () => {
+    expect(dictionaryForLanguage('fr', installed)).toBeNull()
+    expect(dictionaryForLanguage('en-AU', installed)).toBeNull()
+    expect(dictionaryForLanguage('pt-PT', installed)).toBeNull()
+    expect(dictionaryForLanguage('es-MX', new Set(['en-US']))).toBeNull()
+  })
+})
+
+describe('fallbackSpellLanguage', () => {
+  const shipped = new Set(['en-US', 'en-GB'])
+  const available = ['de', 'en-GB', 'en-US', 'fr', 'ru']
+
+  it('keeps the active languages when one of them has a dictionary', () => {
+    expect(fallbackSpellLanguage(['en-US'], 'en-US', shipped, available)).toBeNull()
+    expect(fallbackSpellLanguage(['fr', 'en-GB'], 'fr-FR', shipped, available)).toBeNull()
+    // a dictionary an older version downloaded keeps its language
+    expect(
+      fallbackSpellLanguage(['ru'], 'ru-RU', new Set([...shipped, 'ru-RU']), available),
+    ).toBeNull()
+  })
+
+  it('switches a system language without a dictionary to English', () => {
+    expect(fallbackSpellLanguage(['de'], 'de-DE', shipped, available)).toBe('en-US')
+    expect(fallbackSpellLanguage([], 'ar', shipped, available)).toBe('en-US')
+    expect(fallbackSpellLanguage(['en-AU'], 'en-AU', shipped, available)).toBe('en-GB')
+    expect(fallbackSpellLanguage(['fr'], 'en_GB', shipped, available)).toBe('en-GB')
+  })
+
+  it('does nothing when no English dictionary is on disk', () => {
+    expect(fallbackSpellLanguage(['de'], 'de-DE', new Set(), available)).toBeNull()
   })
 })

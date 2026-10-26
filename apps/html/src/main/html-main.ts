@@ -57,7 +57,7 @@ import {
   editableImageMime,
   extensionlessAssetMime,
 } from './asset-mime'
-import { buildPreviewDocument } from './preview-document'
+import { BLOCK_REMOTE_CSP, buildPreviewDocument } from './preview-document'
 import { inlineImagesForSingleFile, singleFileExportBaseName } from './single-file-html'
 import {
   assetBaseHref,
@@ -658,8 +658,15 @@ async function resolveSaveTarget(
 function registerImageProtocol(): void {
   protocol.handle('html-asset', async (request) => {
     let target: string
+    let blockRemote = false
     try {
-      target = decodeURIComponent(new URL(request.url).pathname)
+      const url = new URL(request.url)
+      target = decodeURIComponent(url.pathname)
+      // a preview's assets carry its view (assetBaseHref): a local document the page frames
+      // (an SVG chart in an <object>) follows that view's "Load web content" choice
+      // (print and export documents use the neutral host and load as they always have)
+      const view = /^view-(\d+)$/.exec(url.host)
+      if (view) blockRemote = !remoteAllowedWc.has(Number(view[1]))
     } catch {
       return new Response(null, { status: 400 })
     }
@@ -683,8 +690,15 @@ function registerImageProtocol(): void {
       if (!mime) return new Response(null, { status: 404 })
     }
     const res = await net.fetch(pathToFileURL(target).toString())
-    if (!mime || !res.ok) return res
-    return new Response(res.body, { status: 200, headers: { 'Content-Type': mime } })
+    if (!res.ok) return res
+    const headers = new Headers(res.headers)
+    if (mime) headers.set('Content-Type', mime)
+    // Only framed documents read these; pictures, stylesheets and scripts ignore them
+    if (blockRemote) {
+      headers.set('Content-Security-Policy', BLOCK_REMOTE_CSP)
+      headers.set('X-DNS-Prefetch-Control', 'off')
+    }
+    return new Response(res.body, { status: res.status, headers })
   })
 }
 
@@ -712,7 +726,7 @@ function registerHtmlIpc(): void {
     const doc = savePathByWc.get(wcId)
     return {
       text,
-      baseHref: doc ? assetBaseHref(dirname(doc)) : null,
+      baseHref: doc ? assetBaseHref(dirname(doc), wcId) : null,
       allowRemote: remoteAllowedWc.has(wcId),
     }
   })
@@ -747,9 +761,10 @@ function registerHtmlIpc(): void {
     remoteAllowedWc.add(e.sender.id)
   })
 
-  ipcMain.handle(HTML_CHANNELS.previewInfo, (e) => ({
-    url: previewUrlFor(presentOwnerByWc.get(e.sender.id) ?? e.sender.id),
-  }))
+  ipcMain.handle(HTML_CHANNELS.previewInfo, (e) => {
+    const owner = presentOwnerByWc.get(e.sender.id) ?? e.sender.id
+    return { url: previewUrlFor(owner), allowRemote: remoteAllowedWc.has(owner) }
+  })
 
   // Same shape as the slides show: the renderer asks for the screen in one call so the
   // macOS snap skips the Space animation; HTML fullscreen is left to the renderer elsewhere.
@@ -1160,6 +1175,9 @@ function grantAndTrack(wc: WebContents, openPath?: string | null): void {
     allowedByWc.set(wcId, new Set([openPath]))
   }
   installExternalLinkOpener(wc)
+  // No content policy covers WebRTC: a previewed document's script must not reach the
+  // network through it either (preview-document.ts also hides it while web content is blocked)
+  wc.setWebRTCIPHandlingPolicy('disable_non_proxied_udp')
   wc.once('destroyed', () => {
     closePresentViewsOf(wcId)
     openPathByWc.delete(wcId)
@@ -1188,6 +1206,7 @@ function bindPresentView(wc: WebContents, ownerWcId: number, title: string): voi
   const wcId = wc.id
   presentOwnerByWc.set(wcId, ownerWcId)
   installExternalLinkOpener(wc)
+  wc.setWebRTCIPHandlingPolicy('disable_non_proxied_udp')
   wc.once('destroyed', () => presentOwnerByWc.delete(wcId))
   const query = { present: String(ownerWcId), title }
   void wc.loadURL(rendererUrl(runtime.rendererUrl, 'html', query))

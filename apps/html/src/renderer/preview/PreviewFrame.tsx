@@ -15,16 +15,19 @@ interface Props {
   onMessage: (msg: FromInspector) => void
   /** fires for every document the frame loads, link navigations included */
   onLoad?: () => void
+  /** the frame may open windows; off while web content is blocked, so a document's
+   * script cannot open the user's browser at an address of its choosing */
+  allowPopups: boolean
 }
 
 /**
- * The document runs in a sandboxed frame with an opaque origin: scripts and
- * network are allowed (CDN-dependent pages must render), the app itself is out
- * of reach. Reloads go through the src attribute because the frame's window is
+ * The document runs in a sandboxed frame with an opaque origin: its scripts run,
+ * web content waits for the user's "Load web content" (preview-protocol.ts), and
+ * the app itself is out of reach. Reloads go through the src attribute because the frame's window is
  * cross-origin to us; the inspector talks back over postMessage.
  */
 export const PreviewFrame = forwardRef<PreviewFrameHandle, Props>(function PreviewFrame(
-  { url, nonce, zoom, onMessage, onLoad },
+  { url, nonce, zoom, onMessage, onLoad, allowPopups },
   ref,
 ) {
   const frameRef = useRef<HTMLIFrameElement>(null)
@@ -56,7 +59,7 @@ export const PreviewFrame = forwardRef<PreviewFrameHandle, Props>(function Previ
         title={t('viewPreview')}
         src={src}
         onLoad={onLoad}
-        sandbox="allow-scripts allow-forms allow-popups allow-modals"
+        sandbox={`allow-scripts allow-forms allow-modals${allowPopups ? ' allow-popups' : ''}`}
         referrerPolicy="no-referrer"
       />
     </div>

@@ -30,6 +30,8 @@ import type { MenuItemConstructorOptions, NativeImage, Session, WebContents } fr
 import { atomicCopyFile, atomicWriteFile } from './atomic-write'
 import {
   DICTIONARIES_DIR_NAME,
+  fallbackSpellLanguage,
+  installedDictionaryLanguages,
   localDictionaryDownloadUrl,
   seedSpellDictionaries,
 } from '@genoffice/electron-utils/spell-dictionaries'
@@ -320,7 +322,18 @@ if (process.platform !== 'darwin') {
   const keepDictionariesLocal = (ses: Session) =>
     ses.setSpellCheckerDictionaryDownloadURL(localDictionaryDownloadUrl(SPELL_DICTIONARIES_DIR))
   app.on('session-created', keepDictionariesLocal)
-  void app.whenReady().then(() => keepDictionariesLocal(session.defaultSession))
+  void app.whenReady().then(() => {
+    const ses = session.defaultSession
+    keepDictionariesLocal(ses)
+    // A system language without a dictionary would leave nothing checked: use English
+    const fallback = fallbackSpellLanguage(
+      ses.getSpellCheckerLanguages(),
+      app.getLocale(),
+      installedDictionaryLanguages(join(app.getPath('userData'), DICTIONARIES_DIR_NAME)),
+      ses.availableSpellCheckerLanguages,
+    )
+    if (fallback) ses.setSpellCheckerLanguages([fallback])
+  })
 }
 
 /**

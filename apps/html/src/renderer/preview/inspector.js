@@ -855,6 +855,17 @@
   document.addEventListener(
     'click',
     (e) => {
+      // While web content is blocked the frame may not open windows, and it can never go
+      // to a web address (the editor's frame-src): a web link goes through the app, which
+      // opens it in the browser on this click
+      if (!selecting() && window.__gxRemoteBlocked) {
+        const a = e.target && e.target.closest && e.target.closest('a[href]')
+        if (a && /^(https?|mailto):/i.test(a.href)) {
+          e.preventDefault()
+          post({ type: 'gx:navigateBlocked', href: a.href })
+          return
+        }
+      }
       if (!selecting()) return
       if (swallowClick) {
         swallowClick = false

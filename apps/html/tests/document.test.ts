@@ -199,6 +199,8 @@ describe('preview document', () => {
     expect(buildPreviewDocument(authored, base)).toBe(authored)
     expect(buildPreviewDocument('<p>a</p>', null)).toBe('<p>a</p>')
     expect(assetBaseHref('C:\\Users\\h\\docs\\')).toBe('html-asset://local/C:/Users/h/docs/')
+    // a preview's base names its view, so the asset handler can apply that view's choice
+    expect(assetBaseHref('/Users/h/docs', 7)).toBe('html-asset://view-7/Users/h/docs/')
   })
 
   it('keeps a leading doctype first when the document has no head or html tag', async () => {

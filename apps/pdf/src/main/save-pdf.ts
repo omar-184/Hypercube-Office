@@ -16,7 +16,7 @@ import {
   rgb,
 } from 'pdf-lib'
 import type { PDFPage } from 'pdf-lib'
-import { containsAscii } from '../shared/ascii-search'
+import { mayContainCatalogKey } from './catalog-key-scan'
 import { STATIC_FORM_FILLS_KEY_NAME, VISUAL_SIGNATURE_CONTENT_PREFIX } from '../shared/ipc'
 import type {
   DrawingInput,
@@ -66,10 +66,8 @@ function validStaticFormFill(value: unknown): value is StaticFormFillRecord {
 
 export async function readStaticFormFills(bytes: Uint8Array): Promise<StaticFormFillRecord[]> {
   // A full pdf-lib parse of a large file blocks the shared main process for seconds; files
-  // that never had records (nearly all) are ruled out by a native byte search instead.
-  // Both serializers that write the records (pdf-lib with `useObjectStreams: false`, then
-  // PDFium's SaveAsCopy for redactions) store the catalog uncompressed.
-  if (!containsAscii(bytes, STATIC_FORM_FILLS_KEY_NAME)) return []
+  // that never had records (nearly all) are ruled out without one (catalog-key-scan.ts)
+  if (!(await mayContainCatalogKey(bytes, STATIC_FORM_FILLS_KEY_NAME))) return []
   const pdfDoc = await PDFDocument.load(bytes, { updateMetadata: false })
   const value = pdfDoc.catalog.get(STATIC_FORM_FILLS_KEY)
   if (!(value instanceof PDFHexString)) return []

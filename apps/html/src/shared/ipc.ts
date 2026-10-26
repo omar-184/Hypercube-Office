@@ -126,7 +126,8 @@ export interface HtmlApi {
   /** Push the current buffer so html-preview:// serves it to the preview iframe */
   updatePreview(text: string): void
   /** The html-preview:// URL bound to this view (a present tab gets its owner's URL) */
-  getPreviewInfo(): Promise<{ url: string }>
+  /** allowRemote: the user already chose Load web content for this view (or its owner) */
+  getPreviewInfo(): Promise<{ url: string; allowRemote: boolean }>
   /** Load the document's web content in this tab's preview (blocked by default) */
   allowRemoteContent(): Promise<void>
   /** Present → Fullscreen: cover the screen in one main-side call (tab-strip bleed, macOS simpleFullScreen) */

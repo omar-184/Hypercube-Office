@@ -1059,7 +1059,10 @@ export default function App() {
       // getDocument transfers the buffer to the pdf.js worker, leaving `bytes` detached
       // (empty): every scan of the file's bytes has to happen before it
       const xfaMarker = hasXfaMarker(bytes)
-      const mayHaveStaticFormFills = containsAscii(bytes, STATIC_FORM_FILLS_KEY_NAME)
+      // The records' key is visible in the raw bytes unless another program moved the
+      // catalog into a compressed object stream; the main process can look inside those
+      const mayHaveStaticFormFills =
+        containsAscii(bytes, STATIC_FORM_FILLS_KEY_NAME) || containsAscii(bytes, '/ObjStm')
       setFormHasXfa(xfaMarker)
       if (!saved) {
         setFormCatalog(null)

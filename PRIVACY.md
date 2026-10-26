@@ -17,10 +17,10 @@ file makes no network request. It only touches the network when you ask it to:
   or exporting an HTML document loads them, as a web browser would
 - inserting an image from a web address downloads that image
 - pasting content copied from a web page into a Word document downloads its
-  pictures, and exporting a Markdown note with web pictures to Word downloads
-  those pictures
+  pictures, and exporting a Markdown note with web pictures to Word, PDF or
+  images downloads those pictures
 - cropping, cutting out or saving ("Save image as…") a web picture in the HTML
-  editor downloads that picture
+  editor, or saving one in the Markdown editor, downloads that picture
 - clicking a link opens it in your default browser
 - the update check, off by default, asks GitHub Releases
   (`api.github.com`) whether a newer version exists, when you click
@@ -32,7 +32,8 @@ Each of these requests shows the website your computer's internet address and
 the time; no document content is sent.
 
 Spell checking uses English dictionaries shipped with the app and never
-downloads dictionaries (on macOS the system spell checker is used).
+downloads dictionaries; on a computer set to another language it checks in
+English (on macOS the system spell checker is used).
 
 ## Data stored on your computer
 

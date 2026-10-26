@@ -96,3 +96,143 @@ test('an HTML file loads no web content until the user asks for it', async () =>
     await rm(dir, { recursive: true, force: true })
   }
 })
+
+const FRAMED_PAGE = `<!doctype html>
+<html>
+<body>
+<h1>Report</h1>
+<img src="https://images.example.invalid/header.png">
+<object id="chart" data="chart.svg" type="image/svg+xml" width="40" height="40"></object>
+<a id="news" href="https://news.example.invalid/story" target="_blank">News</a>
+<a id="docs" href="https://docs.example.invalid/guide">Guide</a>
+<script>
+window.__popup = String(window.open('https://popup.example.invalid/'))
+window.__rtc = typeof RTCPeerConnection
+</script>
+</body>
+</html>
+`
+
+// A chart drawn by a local SVG file, pulling a picture from the web: a framed document
+// does not inherit the page's content policy
+const CHART_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+<image href="https://images.example.invalid/chart-logo.png" width="40" height="40"/>
+</svg>
+`
+
+/** Record the addresses the app hands to the system browser, without opening them */
+async function recordExternalOpens(app: ElectronApplication): Promise<void> {
+  await app.evaluate(({ shell }) => {
+    const g = globalThis as unknown as { __opened: string[] }
+    g.__opened = []
+    shell.openExternal = async (url: string) => {
+      g.__opened.push(url)
+    }
+  })
+}
+
+const externalOpens = (app: ElectronApplication) =>
+  app.evaluate(() => (globalThis as unknown as { __opened: string[] }).__opened)
+
+test('while web content is blocked, framed files, popups and WebRTC stay offline', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'hyperfiles-html-framed-'))
+  const htmlPath = join(dir, 'report.html')
+  await writeFile(htmlPath, FRAMED_PAGE)
+  await writeFile(join(dir, 'chart.svg'), CHART_SVG)
+
+  const launched = await launchShell({
+    onboardingSeen: true,
+    videoDir: 'html-remote-content-framed',
+    openFile: htmlPath,
+  })
+  const { app } = launched
+  try {
+    let editor = await waitForPageWithUrl(app, '://html/')
+    await expect(editor.locator('.preview-frame')).toBeVisible()
+    await recordRemoteRequests(app)
+    await recordExternalOpens(app)
+    await editor.reload()
+    editor = await waitForPageWithUrl(app, '://html/')
+    const frame = editor.frameLocator('.preview-frame')
+    await expect(frame.locator('h1')).toHaveText('Report')
+    const body = frame.locator('body')
+
+    // the page's script could neither open a window nor reach for WebRTC
+    expect(await body.evaluate(() => (window as unknown as { __popup: string }).__popup)).toBe(
+      'null',
+    )
+    expect(await body.evaluate(() => (window as unknown as { __rtc: string }).__rtc)).toBe(
+      'undefined',
+    )
+    // neither the page's web picture nor the framed chart's is fetched
+    await expect(editor.locator('.remote-bar')).toContainText('blocked in this preview')
+    await editor.waitForTimeout(1000)
+    expect(await remoteRequests(app)).toEqual([])
+
+    // A message the document's script forges, without a click, opens nothing (the script
+    // can read the inspector's version stamp, so the message passes for genuine). Playwright's
+    // own calls into a page count as a click for a few seconds: let that run out, then run
+    // the forgery from the main process, which does not
+    await editor.waitForTimeout(5500)
+    const forged = await app.evaluate(async ({ webContents }) => {
+      for (const wc of webContents.getAllWebContents()) {
+        const preview = wc.mainFrame.framesInSubtree.find((f) => f.url.startsWith('html-preview:'))
+        if (!preview) continue
+        return preview.executeJavaScript(
+          `(() => {
+            const sources = [...document.querySelectorAll('script[data-gx-inspector]')]
+            const stamp = /const VERSION = Number\\('(\\d+)'\\)/.exec(
+              sources.map((el) => el.textContent).join('\\n'),
+            )
+            if (!stamp) return false
+            window.parent.postMessage(
+              { type: 'gx:navigateBlocked', href: 'https://forged.example.invalid/', version: Number(stamp[1]) },
+              '*',
+            )
+            return true
+          })()`,
+          false,
+        )
+      }
+      return false
+    })
+    expect(forged).toBe(true)
+    await editor.waitForTimeout(500)
+    expect(await externalOpens(app)).toEqual([])
+
+    // web links still open in the browser when clicked: Ctrl+click while editing, a plain
+    // click while presenting (the frame may not open windows itself)
+    await frame.locator('#news').click({ modifiers: ['ControlOrMeta'] })
+    await expect.poll(() => externalOpens(app)).toEqual(['https://news.example.invalid/story'])
+    await editor
+      .locator('.ribbon-body')
+      .getByRole('button', { name: /Present/ })
+      .click()
+    await editor
+      .locator('.rb-menu')
+      .getByRole('menuitem', { name: /In this tab/ })
+      .click()
+    await expect(editor.locator('.present-exit')).toBeVisible()
+    await frame.locator('#docs').click()
+    await frame.locator('#news').click()
+    await expect
+      .poll(() => externalOpens(app))
+      .toEqual([
+        'https://news.example.invalid/story',
+        'https://docs.example.invalid/guide',
+        'https://news.example.invalid/story',
+      ])
+    await expect(frame.locator('h1')).toHaveText('Report')
+    expect(await remoteRequests(app)).toEqual([])
+    await editor.locator('.present-exit').click()
+
+    // Load web content covers the framed chart too
+    await editor.locator('.remote-bar').getByRole('button', { name: 'Load web content' }).click()
+    await expect
+      .poll(() => remoteRequests(app))
+      .toContain('https://images.example.invalid/chart-logo.png')
+  } finally {
+    await closeAndSaveVideo(launched, 'html-remote-content-framed')
+    await rm(dir, { recursive: true, force: true })
+  }
+})

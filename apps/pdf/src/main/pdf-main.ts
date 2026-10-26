@@ -83,7 +83,7 @@ import {
 } from './signature-store'
 import { uniqueGeneratedPdfPath } from './generated-output'
 import { validateRedactionRegions } from './redaction'
-import { decideSignedWrite, hasSignatureMarker, type SignedWriteKind } from './signed-guard'
+import { decideSignedWrite, hasIntactSignature, type SignedWriteKind } from './signed-guard'
 
 const tDlg = createI18n({
   zh: {
@@ -824,6 +824,11 @@ export function pdfFileRenamed(contents: WebContents, oldPath: string, newPath: 
   if (allowed?.has(oldPath)) allowed.add(newPath)
   if (saveAsTargetByWc.get(wcId) === oldPath) saveAsTargetByWc.set(wcId, newPath)
   if (untitledPdfPaths.delete(oldPath)) untitledPdfPaths.add(newPath)
+  // The view keeps its document without re-reading it: carry its signed state over, or the
+  // next save into the renamed or moved file would skip the signature warning
+  for (const byPath of [signedPathsByWc, signedWriteOkByWc]) {
+    if (byPath.get(wcId)?.delete(oldPath)) byPath.get(wcId)!.add(newPath)
+  }
   if (!contents.isDestroyed()) contents.send(PDF_CHANNELS.fileRenamed, newPath)
 }
 
@@ -1129,7 +1134,7 @@ function registerPdfIpc(): void {
     const buf = await readFile(path)
     // Every open and every post-save reload comes through here, so the record stays current
     const signed = signedPathsByWc.get(e.sender.id) ?? new Set<string>()
-    if (hasSignatureMarker(buf)) signed.add(path)
+    if (hasIntactSignature(buf)) signed.add(path)
     else signed.delete(path)
     signedPathsByWc.set(e.sender.id, signed)
     return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   PDFArray,
   PDFContentStream,
@@ -517,8 +517,35 @@ describe('static form fill metadata', () => {
   })
 
   it('returns no records for a file that never had any, without a full parse', async () => {
-    // not a parseable PDF: the byte check must answer before pdf-lib is asked to load it
-    expect(await readStaticFormFills(new TextEncoder().encode('%PDF-1.7 garbage'))).toEqual([])
+    const load = vi.spyOn(PDFDocument, 'load')
+    try {
+      expect(await readStaticFormFills(new TextEncoder().encode('%PDF-1.7 garbage'))).toEqual([])
+      // object streams are searched after inflating, still without a parse
+      const packed = await (await PDFDocument.load(await makePdf([[100, 100]]))).save()
+      expect(new TextDecoder('latin1').decode(packed)).toContain('/ObjStm')
+      load.mockClear()
+      expect(await readStaticFormFills(packed)).toEqual([])
+      expect(load).not.toHaveBeenCalled()
+    } finally {
+      load.mockRestore()
+    }
+  })
+
+  it('finds the records after another program packs the catalog into an object stream', async () => {
+    const saved = await apply(
+      await makePdf([[100, 100]]),
+      request({
+        staticFormFills: [
+          { id: 'a', kind: 'text', pageIndex: 0, rect: [1, 2, 30, 12], text: 'Eve' },
+        ],
+      }),
+    )
+    // a default pdf-lib save stands in for any tool that writes object streams
+    const repacked = await (await PDFDocument.load(saved)).save()
+    expect(new TextDecoder('latin1').decode(repacked)).not.toContain('GenOfficeStaticFormFills')
+    expect(await readStaticFormFills(repacked)).toEqual([
+      { id: 'a', kind: 'text', pageIndex: 0, rect: [1, 2, 30, 12], text: 'Eve' },
+    ])
   })
 
   it('removes the catalog entry when the last fill is deleted', async () => {

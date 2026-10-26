@@ -252,6 +252,7 @@ export default function App() {
         setPath(pending)
         setText(doc.text)
         setSavedText(doc.text)
+        setRemoteAllowed(info.allowRemote)
         setPreviewUrl(info.url)
         setStatus('ready')
       } catch (err) {
@@ -656,6 +657,9 @@ export default function App() {
           return
         }
         case 'gx:navigateBlocked':
+          // Only on a real click: the document's own script can post this message too
+          // (the frame's click activates this window as well)
+          if (!navigator.userActivation?.isActive) return
           window.open(msg.href)
           setNotice(t('openExternal'))
           return
@@ -740,6 +744,11 @@ export default function App() {
     let imageSrc: string | undefined
     if (kind === 'image' && opts.url) {
       imageSrc = opts.url
+      // asking for a picture from the web is consent to load web content in this tab
+      if (/^https?:/i.test(opts.url)) {
+        await window.htmlApi.allowRemoteContent()
+        setRemoteAllowed(true)
+      }
     } else if (kind === 'image') {
       if (!pathRef.current) {
         setNotice(t('imageNeedsSave'))
@@ -916,11 +925,13 @@ export default function App() {
   // "Load web content": the main process drops the preview's content policy for this tab,
   // then the frame reloads the same copy (its parse-map version is still live)
   const loadRemoteContent = useCallback(() => {
+    // land pending style pokes first: the reload serves the pushed source, not the frame
+    flushPending()
     void window.htmlApi.allowRemoteContent().then(() => {
       setRemoteAllowed(true)
       setPreviewNonce((n) => n + 1)
     })
-  }, [])
+  }, [flushPending])
 
   // a link navigation inside the presented frame keeps focus in a document without our
   // inspector; hand it back to the app so Esc still ends the presentation
@@ -1344,6 +1355,7 @@ export default function App() {
                   zoom={zoom}
                   onMessage={onInspectorMessage}
                   onLoad={onPreviewLoad}
+                  allowPopups={remoteAllowed}
                 />
                 {canvasMode === 'present' && (
                   <button
