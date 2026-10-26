@@ -206,6 +206,7 @@ export const strings = {
     language: '语言',
     closeTab: '关闭标签',
     tabList: '全部标签',
+    openTabs: '打开的文档',
     appMenu: '菜单',
     newTab: '新建标签页',
     // First-run onboarding
@@ -419,6 +420,7 @@ export const strings = {
     language: 'Language',
     closeTab: 'Close tab',
     tabList: 'All tabs',
+    openTabs: 'Open documents',
     appMenu: 'Menu',
     newTab: 'New tab',
     // First-run onboarding
@@ -630,6 +632,7 @@ export const strings = {
     language: 'Ngôn ngữ',
     closeTab: 'Đóng tab',
     tabList: 'Tất cả các tab',
+    openTabs: 'Tài liệu đang mở',
     appMenu: 'Menu',
     newTab: 'Tab mới',
     // First-run onboarding
@@ -852,6 +855,7 @@ export const strings = {
     language: '言語',
     closeTab: 'タブを閉じる',
     tabList: 'すべてのタブ',
+    openTabs: '開いているドキュメント',
     appMenu: 'メニュー',
     newTab: '新しいタブ',
     // First-run onboarding
@@ -1071,6 +1075,7 @@ export const strings = {
     language: '언어',
     closeTab: '탭 닫기',
     tabList: '모든 탭',
+    openTabs: '열린 문서',
     appMenu: '메뉴',
     newTab: '새 탭',
     // First-run onboarding
@@ -1294,6 +1299,7 @@ export const strings = {
     language: 'Langue',
     closeTab: "Fermer l'onglet",
     tabList: 'Tous les onglets',
+    openTabs: 'Documents ouverts',
     appMenu: 'Menu',
     newTab: 'Nouvel onglet',
     // First-run onboarding
@@ -1520,6 +1526,7 @@ export const strings = {
     language: 'Sprache',
     closeTab: 'Tab schließen',
     tabList: 'Alle Tabs',
+    openTabs: 'Geöffnete Dokumente',
     appMenu: 'Menü',
     newTab: 'Neuer Tab',
     // First-run onboarding
@@ -1744,6 +1751,7 @@ export const strings = {
     language: 'Idioma',
     closeTab: 'Cerrar pestaña',
     tabList: 'Todas las pestañas',
+    openTabs: 'Documentos abiertos',
     appMenu: 'Menú',
     newTab: 'Nueva pestaña',
     // First-run onboarding
@@ -1963,6 +1971,7 @@ export const strings = {
     language: 'ภาษา',
     closeTab: 'ปิดแท็บ',
     tabList: 'แท็บทั้งหมด',
+    openTabs: 'เอกสารที่เปิดอยู่',
     appMenu: 'เมนู',
     newTab: 'แท็บใหม่',
     // First-run onboarding
@@ -2186,6 +2195,7 @@ export const strings = {
     language: 'Bahasa',
     closeTab: 'Tutup tab',
     tabList: 'Semua tab',
+    openTabs: 'Dokumen terbuka',
     appMenu: 'Menu',
     newTab: 'Tab baru',
     // First-run onboarding
@@ -2408,6 +2418,7 @@ export const strings = {
     language: 'Язык',
     closeTab: 'Закрыть вкладку',
     tabList: 'Все вкладки',
+    openTabs: 'Открытые документы',
     appMenu: 'Меню',
     newTab: 'Новая вкладка',
     // First-run onboarding
@@ -2625,6 +2636,7 @@ export const strings = {
     language: 'اللغة',
     closeTab: 'إغلاق علامة التبويب',
     tabList: 'كل علامات التبويب',
+    openTabs: 'المستندات المفتوحة',
     appMenu: 'القائمة',
     newTab: 'علامة تبويب جديدة',
     // First-run onboarding
@@ -2839,6 +2851,7 @@ export const strings = {
     language: 'Idioma',
     closeTab: 'Fechar guia',
     tabList: 'Todas as guias',
+    openTabs: 'Documentos abertos',
     appMenu: 'Menu',
     newTab: 'Nova guia',
     // First-run onboarding
@@ -3052,6 +3065,7 @@ export const strings = {
     language: 'Lingua',
     closeTab: 'Chiudi scheda',
     tabList: 'Tutte le schede',
+    openTabs: 'Documenti aperti',
     appMenu: 'Menu',
     newTab: 'Nuova scheda',
     // First-run onboarding
@@ -3266,6 +3280,7 @@ export const strings = {
     language: 'Język',
     closeTab: 'Zamknij kartę',
     tabList: 'Wszystkie karty',
+    openTabs: 'Otwarte dokumenty',
     appMenu: 'Menu',
     newTab: 'Nowa karta',
     // First-run onboarding
@@ -3467,6 +3482,7 @@ export const strings = {
     language: 'Jazyk',
     closeTab: 'Zavřít kartu',
     tabList: 'Všechny karty',
+    openTabs: 'Otevřené dokumenty',
     appMenu: 'Nabídka',
     newTab: 'Nová karta',
     // First-run onboarding
@@ -3690,6 +3706,7 @@ export const strings = {
     language: 'Taal',
     closeTab: 'Tabblad sluiten',
     tabList: 'Alle tabbladen',
+    openTabs: 'Geopende documenten',
     appMenu: 'Menu',
     newTab: 'Nieuw tabblad',
     // First-run onboarding
@@ -3903,6 +3920,7 @@ export const strings = {
     language: 'Bahasa',
     closeTab: 'Tutup tab',
     tabList: 'Semua tab',
+    openTabs: 'Dokumen terbuka',
     appMenu: 'Menu',
     newTab: 'Tab baharu',
     // First-run onboarding
@@ -4113,6 +4131,7 @@ export const strings = {
     language: 'שפה',
     closeTab: 'סגירת כרטיסייה',
     tabList: 'כל הכרטיסיות',
+    openTabs: 'מסמכים פתוחים',
     appMenu: 'תפריט',
     newTab: 'כרטיסייה חדשה',
     // First-run onboarding
@@ -4327,6 +4346,7 @@ export const strings = {
     language: 'भाषा',
     closeTab: 'टैब बंद करें',
     tabList: 'सभी टैब',
+    openTabs: 'खुले दस्तावेज़',
     appMenu: 'मेनू',
     newTab: 'नया टैब',
     // First-run onboarding
@@ -4536,6 +4556,7 @@ export const strings = {
     language: '語言',
     closeTab: '關閉分頁',
     tabList: '全部分頁',
+    openTabs: '開啟的文件',
     appMenu: '選單',
     newTab: '新分頁',
     // First-run onboarding

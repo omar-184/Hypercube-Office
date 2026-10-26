@@ -164,6 +164,17 @@ body.overlay-title-bar .tab-bar-drag-spacer {
   pointer-events: none;
 }
 
+/* keyboard focus: the strip scrolls and clips, so the ring is drawn on the
+ * plate inside the tab rather than around it */
+.tab-item:focus-visible {
+  outline: none;
+}
+
+.tab-item:focus-visible .tab-plate {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
 .tab-item:not(.active):hover .tab-plate {
   --tabbar-bg-1: rgba(255, 255, 255, 0.85);
   background: var(--tabbar-bg-1);

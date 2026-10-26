@@ -155,7 +155,11 @@ const WINDOW_HEIGHT = 600
 
 interface FakeShellWindow {
   on: ReturnType<typeof vi.fn>
-  webContents: { once: ReturnType<typeof vi.fn>; focus: ReturnType<typeof vi.fn> }
+  webContents: {
+    on: ReturnType<typeof vi.fn>
+    once: ReturnType<typeof vi.fn>
+    focus: ReturnType<typeof vi.fn>
+  }
   isDestroyed: ReturnType<typeof vi.fn>
   isFocused: ReturnType<typeof vi.fn>
   getContentBounds: () => { x: number; y: number; width: number; height: number }
@@ -168,7 +172,7 @@ interface FakeShellWindow {
 function makeShellWindow(): FakeShellWindow {
   return {
     on: vi.fn(),
-    webContents: { once: vi.fn(), focus: vi.fn() },
+    webContents: { on: vi.fn(), once: vi.fn(), focus: vi.fn() },
     isDestroyed: vi.fn(() => false),
     isFocused: vi.fn(() => true),
     getContentBounds: () => ({ x: 0, y: 0, width: WINDOW_WIDTH, height: WINDOW_HEIGHT }),
@@ -463,6 +467,57 @@ describe('activation', () => {
       width: WINDOW_WIDTH,
       height: WINDOW_HEIGHT - TAB_STRIP_HEIGHT,
     })
+  })
+})
+
+describe('tab switching keys', () => {
+  type KeyHandler = (event: { preventDefault: () => void }, input: object) => void
+  const press = (handler: KeyHandler, input: object) => {
+    const event = { preventDefault: vi.fn() }
+    handler(event, {
+      type: 'keyDown',
+      key: '',
+      code: '',
+      control: false,
+      meta: false,
+      shift: false,
+      alt: false,
+      ...input,
+    })
+    return event.preventDefault.mock.calls.length > 0
+  }
+  const shellKeys = () =>
+    shellWindow.webContents.on.mock.calls.find(
+      (c) => c[0] === 'before-input-event',
+    )![1] as KeyHandler
+
+  it('cycles with wrap-around and picks tabs by number', () => {
+    const a = manager.openDocsTab('/a.docx')
+    const b = manager.openDocsTab('/b.docx')
+    manager.switchTab({ cycle: 1 })
+    expect(manager.list().find((t) => t.active)?.id).toBe('home')
+    manager.switchTab({ cycle: -1 })
+    expect(manager.list().find((t) => t.active)?.id).toBe(b)
+    manager.switchTab({ index: 1 })
+    expect(manager.list().find((t) => t.active)?.id).toBe(a)
+    manager.switchTab({ last: true })
+    expect(manager.list().find((t) => t.active)?.id).toBe(b)
+    // a number past the last tab does nothing
+    manager.switchTab({ index: 7 })
+    expect(manager.list().find((t) => t.active)?.id).toBe(b)
+  })
+
+  it('takes Ctrl+Tab in an editor and Ctrl+1 only on the shell page', () => {
+    const a = manager.openDocsTab('/a.docx')
+    const view = lastCreatedView(createDocsView)
+    const editorKeys = view.webContents.listeners.get('before-input-event') as unknown as KeyHandler
+    expect(press(editorKeys, { key: 'Tab', control: true })).toBe(true)
+    expect(manager.list().find((t) => t.active)?.id).toBe('home')
+    expect(press(shellKeys(), { code: 'Digit2', key: '2', control: true })).toBe(true)
+    expect(manager.list().find((t) => t.active)?.id).toBe(a)
+    // inside the editor Ctrl+1 stays the editor's (single spacing in Docs)
+    expect(press(editorKeys, { code: 'Digit1', key: '1', control: true })).toBe(false)
+    expect(manager.list().find((t) => t.active)?.id).toBe(a)
   })
 })
 

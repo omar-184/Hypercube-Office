@@ -45,6 +45,7 @@ import {
 } from '../../../slides/src/main/slides-main'
 import type { TabKind, TabSummary } from '../shared/tabs-api'
 import { TAB_STRIP_HEIGHT } from '../shared/tab-drag-geometry'
+import { tabKeyAction, type TabKeyAction } from './tab-keys'
 
 /** a tab lifted out of the strip with its live view: what "Open in New Window",
  *  tear-off and dock hand back and forth between the shell and a detached window */
@@ -91,6 +92,8 @@ export class TabManager {
   /** views whose HTML-fullscreen listeners are installed: a view that leaves
    *  for a detached window and docks back must not get a second pair */
   private readonly fullScreenTracked = new WeakSet<WebContentsView>()
+  /** pages whose tab-switching keys are wired, for the same reason */
+  private readonly tabKeysTracked = new WeakSet<WebContents>()
   /** Sheets renderer mounted ahead of the next open: parsing its bundle and
    *  booting Univer is the bulk of a workbook's open time, and the shell hands
    *  the path over after mount anyway. */
@@ -113,6 +116,39 @@ export class TabManager {
       this.layout()
       setImmediate(() => this.layout())
     })
+    this.listenForTabKeys(shellWindow.webContents, false)
+  }
+
+  /** Everything a view needs on joining the strip. */
+  private trackView(view: WebContentsView): void {
+    this.trackHtmlFullScreen(view)
+    this.listenForTabKeys(view.webContents, true)
+  }
+
+  /** Ctrl+Tab and the other tab keys (tab-keys.ts), caught before the page sees them. */
+  private listenForTabKeys(wc: WebContents, inEditor: boolean): void {
+    if (this.tabKeysTracked.has(wc)) return
+    this.tabKeysTracked.add(wc)
+    wc.on('before-input-event', (event, input) => {
+      // a view that left for a window of its own has no strip to switch
+      if (inEditor && !this.tabs.some((t) => t.view?.webContents === wc)) return
+      const action = tabKeyAction(input, { inEditor, mac: process.platform === 'darwin' })
+      if (!action) return
+      event.preventDefault()
+      this.switchTab(action)
+    })
+  }
+
+  switchTab(action: TabKeyAction): void {
+    const n = this.tabs.length
+    const at = this.tabs.findIndex((t) => t.id === this.activeId)
+    const target =
+      'cycle' in action
+        ? this.tabs[(at + action.cycle + n) % n]
+        : 'last' in action
+          ? this.tabs[n - 1]
+          : this.tabs[action.index]
+    if (target && target.id !== this.activeId) this.activateTab(target.id)
   }
 
   private scheduleSpareSheetsView(delayMs: number): void {
@@ -234,7 +270,7 @@ export class TabManager {
     if (options?.newBlank) markDocsNewBlank(view.webContents.id)
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'docs',
@@ -262,7 +298,7 @@ export class TabManager {
       this.shellWindow.contentView.addChildView(view)
       view.setVisible(false)
     }
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'sheets',
@@ -279,7 +315,7 @@ export class TabManager {
     const id = `t${this.nextId++}`
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'slides',
@@ -296,7 +332,7 @@ export class TabManager {
     const id = `t${this.nextId++}`
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({ id, kind: 'pdf', view, title: basename(openPath), filePath: openPath })
     this.activateTab(id)
     return id
@@ -316,7 +352,7 @@ export class TabManager {
     const id = `t${this.nextId++}`
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'markdown',
@@ -333,7 +369,7 @@ export class TabManager {
     const id = `t${this.nextId++}`
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'html',
@@ -351,7 +387,7 @@ export class TabManager {
     const id = `t${this.nextId++}`
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     this.tabs.push({
       id,
       kind: 'html',
@@ -623,7 +659,7 @@ export class TabManager {
     const { view } = record
     this.shellWindow.contentView.addChildView(view)
     view.setVisible(false)
-    this.trackHtmlFullScreen(view)
+    this.trackView(view)
     const slot =
       index === undefined || !Number.isFinite(index)
         ? this.tabs.length
