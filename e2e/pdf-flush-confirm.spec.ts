@@ -54,7 +54,7 @@ async function shownBoxes(app: ElectronApplication): Promise<string[]> {
 }
 
 async function addTextBox(editor: Page, text: string): Promise<void> {
-  await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+  await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
   const tool = editor.getByRole('button', { name: 'Text box', exact: true })
   if (!(await tool.getAttribute('class'))?.split(' ').includes('active')) await tool.click()
   const layer = editor.locator('.pdf-page .pdf-draw-layer').first()
@@ -69,7 +69,7 @@ async function addTextBox(editor: Page, text: string): Promise<void> {
 }
 
 async function insertBlankPage(editor: Page): Promise<void> {
-  await editor.getByRole('button', { name: 'Pages', exact: true }).click()
+  await editor.getByRole('tab', { name: 'Pages', exact: true }).click()
   await editor.getByRole('button', { name: 'Insert blank page', exact: true }).click()
 }
 

@@ -76,6 +76,15 @@ export { CROP_EDGE_LABELS } from './strings-crop-edges'
 export { ImageViewer, type ImageViewerLabels } from './image-viewer'
 export { trapTab, useModalKeys } from './modal-keys'
 export {
+  RIBBON_PANEL_ID,
+  RIBBON_TABS_LABELS,
+  moveBetweenRibbonTabs,
+  ribbonPanelProps,
+  ribbonTabId,
+  ribbonTabListProps,
+  ribbonTabProps,
+} from './ribbon-tabs'
+export {
   removeBackground,
   sampleBackgroundColors,
   type CutoutResult,

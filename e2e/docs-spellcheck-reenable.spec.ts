@@ -71,7 +71,7 @@ test('re-enabling spellcheck respells existing text without user input', async (
     const textBefore = await pageText(editor)
 
     const spelling = editor.getByRole('button', { name: 'Spelling' })
-    await editor.getByRole('button', { name: 'Review' }).click()
+    await editor.getByRole('tab', { name: 'Review' }).click()
     await spelling.waitFor()
 
     await spelling.click()
@@ -133,7 +133,7 @@ test('toggling spellcheck never scrolls the view to the caret', async () => {
     await wait(300)
 
     const spelling = editor.getByRole('button', { name: 'Spelling' })
-    await editor.getByRole('button', { name: 'Review' }).click()
+    await editor.getByRole('tab', { name: 'Review' }).click()
     await spelling.waitFor()
     const before = await editor.evaluate(
       () => document.querySelector('.editor-scroll')?.scrollTop ?? -1,

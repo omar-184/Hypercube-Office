@@ -311,6 +311,7 @@ export function ChartTypeDialog({ current, onConfirm, onClose }: Props) {
             <button
               key={k.kind}
               className={`chart-type-card ${selected === k.kind ? 'active' : ''}`}
+              aria-pressed={selected === k.kind}
               onClick={() => setSelected(k.kind)}
               onDoubleClick={() => onConfirm(k.kind)}
             >

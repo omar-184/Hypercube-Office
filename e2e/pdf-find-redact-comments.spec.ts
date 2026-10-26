@@ -45,7 +45,7 @@ test('find and redact marks emails; the comments list deletes a saved shape', as
     await expect(editor.locator('.pdf-page').first()).toBeVisible()
 
     // Find & redact: the email pattern marks exactly the address
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await editor.getByRole('button', { name: 'Find & redact', exact: true }).click()
     await editor.getByRole('combobox', { name: 'What to find' }).selectOption('email')
     await expect(editor.locator('.pdf-search-count')).toHaveText('1 / 1')
@@ -60,7 +60,7 @@ test('find and redact marks emails; the comments list deletes a saved shape', as
     await editor.getByRole('button', { name: 'Redact area', exact: true }).click()
 
     // Comments list shows the saved rectangle with its author and text
-    await editor.getByRole('button', { name: 'View', exact: true }).click()
+    await editor.getByRole('tab', { name: 'View', exact: true }).click()
     await editor.getByRole('button', { name: 'Comments', exact: true }).click()
     const row = editor.locator('.pdf-comment-row')
     await expect(row).toHaveCount(1)
@@ -79,7 +79,7 @@ test('find and redact marks emails; the comments list deletes a saved shape', as
     await expect(editor.getByText('Unsaved', { exact: true })).toHaveCount(0)
 
     // Applying the email marks removes every glyph of the address and nothing around it
-    await editor.getByRole('button', { name: 'Annotate', exact: true }).click()
+    await editor.getByRole('tab', { name: 'Annotate', exact: true }).click()
     await editor.getByRole('button', { name: 'Mark all', exact: true }).click()
     await expect(editor.locator('.pdf-redaction-mark')).toHaveCount(1)
     await launched.app.evaluate(({ dialog }, target) => {

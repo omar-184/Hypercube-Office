@@ -163,7 +163,7 @@ test.describe('theme visual adoption', () => {
       await editorPage.screenshot({ path: screenshotPath('theme-docs-dark') })
 
       // View ▸ Dark Mode is Word's Switch Modes: back to white paper under the dark chrome
-      await editorPage.getByRole('button', { name: 'View', exact: true }).click()
+      await editorPage.getByRole('tab', { name: 'View', exact: true }).click()
       await editorPage.getByRole('button', { name: 'Dark Mode', exact: true }).click()
       await expect.poll(async () => luminance(await pageBg())).toBeGreaterThan(180)
       expect(luminance(await pageInk())).toBeLessThan(60)

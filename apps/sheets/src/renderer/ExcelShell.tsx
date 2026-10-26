@@ -6,6 +6,9 @@ import {
   SHAPE_GALLERY_GROUPS,
   RibbonCollapseButton,
   ShapePreview,
+  ribbonPanelProps,
+  ribbonTabListProps,
+  ribbonTabProps,
   useDismissablePopover,
   useRibbonCollapse,
 } from '@genoffice/ui'
@@ -323,7 +326,7 @@ export function ExcelShell({
   calcManual,
   onGoalSeek,
 }: ExcelShellProps): React.JSX.Element {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const [activeTab, setActiveTab] = useState<RibbonTab>('Home')
   const collapse = useRibbonCollapse('ai-sheets-ribbon-collapsed', {
     collapse: t('appRibbonCollapse'),
@@ -497,7 +500,7 @@ export function ExcelShell({
       <header className={`excel-header ${collapse.rootClass}`} ref={collapse.rootRef}>
         <nav
           className={`ribbon-tabs ${IN_TAB ? '' : IS_MAC ? 'ribbon-tabs-mac' : 'ribbon-tabs-win'}`}
-          aria-label={t('appScopeWorkbook')}
+          {...ribbonTabListProps(lang)}
           onDoubleClick={collapse.onTabsDoubleClick}
         >
           <button
@@ -556,6 +559,7 @@ export function ExcelShell({
           {visibleTabs.map((tab) => (
             <button
               className={`${collapse.tabClass(tab === activeTab)} ${tab === 'Chart Design' ? 'contextual' : ''}`}
+              {...ribbonTabProps(tab, tab === activeTab)}
               data-tip={collapse.tabTip(tab === activeTab)}
               key={tab}
               onClick={() => {
@@ -1337,7 +1341,7 @@ function Ribbon({
       },
     ]
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupChartLayouts')}>
           {canEditChart ? (
             largeMenu(t('appAddChartElement'), '📊', t('appAddChartElementTitle'), elementOptions)
@@ -1456,7 +1460,7 @@ function Ribbon({
 
   if (activeTab === 'Insert') {
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupTables')}>
           <RibbonButton
             large
@@ -1727,7 +1731,7 @@ function Ribbon({
       narrow: t('appMarginNarrow'),
     } as const
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupThemes')}>
           {largeMenu(
             t('appGroupThemes'),
@@ -1910,7 +1914,7 @@ function Ribbon({
       />
     )
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupFunctionLibrary')}>
           <RibbonButton
             large
@@ -2071,7 +2075,7 @@ function Ribbon({
 
   if (activeTab === 'Data') {
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appPivotTable')}>
           <RibbonButton
             large
@@ -2228,7 +2232,7 @@ function Ribbon({
 
   if (activeTab === 'View') {
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupWorkbookViews')}>
           <RibbonButton
             large
@@ -2325,7 +2329,7 @@ function Ribbon({
 
   if (activeTab === 'Review') {
     return (
-      <div className="ribbon" data-ribbon-body="">
+      <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
         <RibbonGroup label={t('appGroupProofing')}>
           <RibbonButton
             large
@@ -2430,7 +2434,7 @@ function Ribbon({
     ? fontSizes
     : [...fontSizes, echoSize].sort((a, b) => a - b)
   return (
-    <div className="ribbon" data-ribbon-body="">
+    <div className="ribbon" data-ribbon-body="" {...ribbonPanelProps(activeTab)}>
       <RibbonGroup label={t('appGroupClipboard')}>
         <button
           className="ribbon-tool as-button large"
@@ -3399,6 +3403,7 @@ function RibbonButton({
   return (
     <button
       className={`ribbon-tool as-button ${accent ? 'accent' : ''} ${compact ? 'compact-icon' : ''} ${large ? 'large' : ''} ${active ? 'active' : ''}`}
+      aria-pressed={active}
       onClick={onClick}
       disabled={disabled}
       data-tip={label}

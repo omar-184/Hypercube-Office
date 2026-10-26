@@ -55,6 +55,12 @@
     text-underline-offset: 5px;
   }
 
+  /* ribbon tabs keep their row height with a transparent bottom border, which
+   * the theme would paint under every tab */
+  [role='tablist'] [role='tab'] {
+    border-bottom-color: Canvas;
+  }
+
   /* chosen rows and options */
   :where(
     [role='option'][aria-selected='true'],
